@@ -97,6 +97,10 @@ public class Animal implements WorldElement {
         this.position = position;
     }
 
+    public void setDirection(MapDirection direction) {
+        this.direction = direction;
+    }
+
     @Override
     public String toString() {
         return position.toString() + " " + direction.toString();
