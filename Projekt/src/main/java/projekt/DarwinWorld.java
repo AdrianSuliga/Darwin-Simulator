@@ -11,6 +11,6 @@ public class DarwinWorld {
         System.out.println("działa");
         Vector2d v = new Vector2d(1,1);
         System.out.println(v);
-        System.out.println(MapDirection.NORTHWEST);
+        System.out.println(MapDirection.NORTHWEST.reverse());
     }
 }

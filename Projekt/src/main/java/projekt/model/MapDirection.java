@@ -65,4 +65,8 @@ public enum MapDirection {
     public MapDirection add(MapDirection d){
         return fromInt((this.toInt()+d.toInt())%8);
     }
+
+    public MapDirection reverse(){
+        return MapDirection.fromInt((toInt()+4)%8);
+    }
 }

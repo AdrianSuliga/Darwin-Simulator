@@ -34,9 +34,10 @@ public class Animal implements WorldElement {
 
 
     //zwierzak obraca się, potem idzie w daną strone
-    public void move(int energyConsumed) {
+    public void move(int energyConsumed,/*WorldMap map*/) {
         direction = direction.add(MapDirection.fromInt(genes.get(activeGeneIdx))); //dodajemy do obecnego kierunku ten z genomu
         position = position.add(direction.toUnitVector());
+        //map.moveAnimal(this, direction);
         activeGeneIdx = (activeGeneIdx+1)%genes.size();
         this.energy -= energyConsumed;
         this.daysLived++;
@@ -95,6 +96,10 @@ public class Animal implements WorldElement {
 
     public void setPosition(Vector2d position) {
         this.position = position;
+    }
+
+    public void setDirection(MapDirection direction) {
+        this.direction = direction;
     }
 
     @Override
