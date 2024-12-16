@@ -49,4 +49,20 @@ public enum MapDirection {
             default -> NORTH;
         };
     }
+
+    public int toInt() {
+        return switch (this) {
+            case EAST -> 2;
+            case WEST -> 6;
+            case NORTH -> 0;
+            case SOUTH -> 4;
+            case NORTHEAST -> 1;
+            case NORTHWEST -> 7;
+            case SOUTHEAST -> 3;
+            case SOUTHWEST -> 5;
+        };
+    }
+    public MapDirection add(MapDirection d){
+        return fromInt((this.toInt()+d.toInt())%8);
+    }
 }

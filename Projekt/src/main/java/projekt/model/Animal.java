@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Animal implements WorldElement {
     private Vector2d position;
-    private MapDirection direction;
+    private MapDirection direction;//todo do usuniecia
     private int energy;
     private final List<Integer> genes;
     private int activeGeneIdx;
@@ -32,18 +32,19 @@ public class Animal implements WorldElement {
         return this.position.equals(position);
     }
 
+
+    //zwierzak obraca się, potem idzie w daną strone
     public void move(int energyConsumed) {
-        direction = MapDirection.fromInt(genes.get(activeGeneIdx));
+        direction = direction.add(MapDirection.fromInt(genes.get(activeGeneIdx))); //dodajemy do obecnego kierunku ten z genomu
         position = position.add(direction.toUnitVector());
-        if (++activeGeneIdx == genes.size()) {
-            activeGeneIdx = 0;
-        }
+        activeGeneIdx = (activeGeneIdx+1)%genes.size();
         this.energy -= energyConsumed;
         this.daysLived++;
         if (this.energy <= 0) {
             this.deathDay = this.daysLived;
         }
     }
+
 
     public void eat(int energyGranted) {
         this.energy += energyGranted;
