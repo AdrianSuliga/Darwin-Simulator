@@ -1,5 +1,7 @@
 package projekt.model;
 
+import projekt.interfaces.WorldElement;
+import projekt.util.MapVisualizer;
 import projekt.util.RandomPositionGenerator;
 
 import java.util.*;
@@ -9,6 +11,7 @@ public class WorldMap {
     private Map<Vector2d, Plant> plantList = new HashMap<>();
     private final Boundary boundary;// mapa to obszar od (0,0) do (x,y)
     private final RandomPositionGenerator rpg;
+    private final MapVisualizer visualizer;
 
     private final int defaultEnergyConsumption;
     private final int plantsPerDay;
@@ -20,6 +23,7 @@ public class WorldMap {
         this.defaultEnergyConsumption = defaultEnergyConsumption;
         this.plantsPerDay = plantsPerDay;
         this.rpg = new RandomPositionGenerator(this);
+        this.visualizer  = new MapVisualizer(this);
     }
 
     public int getDefaultEnergyConsumption() {
@@ -51,5 +55,20 @@ public class WorldMap {
         for (Vector2d position: chosenPositions) {
             plantList.put(position, new Plant(position));
         }
+    }
+
+    public boolean isOccupied(Vector2d position) {
+        return animalMap.containsKey(position) || plantList.containsKey(position);
+    }
+
+    public WorldElement objectAt(Vector2d position) {
+        if (animalMap.containsKey(position)) {
+            return animalMap.get(position).stream().findFirst().orElse(null);
+        } else return plantList.getOrDefault(position, null);
+    }
+
+    @Override
+    public String toString() {
+        return this.visualizer.draw(this.boundary.lowerLeft(), this.boundary.upperRight());
     }
 }
