@@ -4,7 +4,7 @@ public class GlobeLogic extends MapMovementLogicHandler{
 
     @Override
     public int getEnergyConsumption() {
-        return map.getDeafultEnergyConsumption();
+        return map.getDefaultEnergyConsumption();
     }
 
     @Override
