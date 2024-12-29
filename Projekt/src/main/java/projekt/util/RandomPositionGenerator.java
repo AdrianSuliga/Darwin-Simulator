@@ -37,19 +37,26 @@ public class RandomPositionGenerator {
 
         int equatorPositionsSize = equatorPositions.size();
         int nonEquatorPositionsSize = nonEquatorPositions.size();
-        int addedPlants = 0;
 
-        while (addedPlants < this.map.getPlantsPerDay()) {
-            if (equatorPositionsSize > 0 && Math.random() < 0.8) { // spawn plant on an equator if there is any place left
+        for (int i = 0; i < this.map.getPlantsPerDay(); i++) {
+            if (equatorPositionsSize > 0 && nonEquatorPositionsSize > 0) {
+                // if there is space both on an equator and outside than we draw
+                if (Math.random() < 0.8) {
+                    result.add(drawPositionFrom(equatorPositions, equatorPositionsSize));
+                    equatorPositionsSize--;
+                } else {
+                    result.add(drawPositionFrom(nonEquatorPositions, nonEquatorPositionsSize));
+                    nonEquatorPositionsSize--;
+                }
+            } else if (equatorPositionsSize > 0 && nonEquatorPositionsSize == 0) {
+                // if the space is only on one part of the map, there is no point to drawing
                 result.add(drawPositionFrom(equatorPositions, equatorPositionsSize));
                 equatorPositionsSize--;
-                addedPlants++;
-            } else if (nonEquatorPositionsSize > 0) { // spawn plant elsewhere if there is space left
+            } else if (equatorPositionsSize == 0 && nonEquatorPositionsSize > 0) {
                 result.add(drawPositionFrom(nonEquatorPositions, nonEquatorPositionsSize));
                 nonEquatorPositionsSize--;
-                addedPlants++;
-            } else { // edge case when there is no place on map (is it even possible?)
-                break; // break out of loop, we cannot spawn anything more
+            } else {
+                break; // edge case when there is no space left to spawn enough plants
             }
         }
 
