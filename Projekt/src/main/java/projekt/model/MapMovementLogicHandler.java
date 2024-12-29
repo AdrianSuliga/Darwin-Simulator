@@ -5,5 +5,5 @@ public abstract class MapMovementLogicHandler {
 
     public abstract int getEnergyConsumption();
 
-    public abstract void moveAnimal(Animal animal, MapDirection direction);
+    public abstract void moveAnimal(Animal animal);
 }
