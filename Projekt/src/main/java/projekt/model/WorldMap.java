@@ -13,7 +13,7 @@ public class WorldMap {
     private final int defaultEnergyConsumption;
     private final int plantsPerDay;
 
-    private MapMovementLogicHandler mapLogic;//uzywamy, by określić zmiane pozycji i koszt energii
+    private MapMovementLogicHandler mapLogic; // uzywamy, by określić zmiane pozycji i koszt energii
 
     public WorldMap(Vector2d upperRight, Vector2d lowerLeft, int defaultEnergyConsumption, int plantsPerDay) {
         this.boundary = new Boundary(upperRight,lowerLeft);

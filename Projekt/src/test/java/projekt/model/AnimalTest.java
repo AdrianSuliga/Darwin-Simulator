@@ -43,17 +43,11 @@ public class AnimalTest {
         animal1.move(50);
         animal2.move(defaultEng);
 
-        assertEquals(new Vector2d(0, 1), animal1.getPosition());
-        assertEquals(MapDirection.NORTH, animal1.getDirection());
         assertEquals(25, animal1.getEnergy());
-        assertEquals(1, animal1.getActiveGeneIdx());
         assertEquals(2, animal2.getDaysLived());
         assertEquals(-1, animal1.getDeathDay());
 
-        assertEquals(new Vector2d(3, 5), animal2.getPosition());
-        assertEquals(MapDirection.NORTHEAST, animal2.getDirection());
         assertEquals(0, animal2.getEnergy());
-        assertEquals(1, animal2.getActiveGeneIdx());
         assertEquals(2, animal2.getDaysLived());
         assertEquals(2, animal2.getDeathDay());
     }

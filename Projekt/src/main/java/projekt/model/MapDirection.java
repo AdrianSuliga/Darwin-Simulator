@@ -13,27 +13,27 @@ public enum MapDirection {
     @Override
     public String toString() {
         return switch (this) {
-            case EAST -> "E";
-            case WEST -> "W";
             case NORTH -> "N";
-            case SOUTH -> "S";
             case NORTHEAST -> "NE";
-            case NORTHWEST -> "NW";
+            case EAST -> "E";
             case SOUTHEAST -> "SE";
+            case SOUTH -> "S";
             case SOUTHWEST -> "SW";
+            case WEST -> "W";
+            case NORTHWEST -> "NW";
         };
     }
 
     public Vector2d toUnitVector() {
         return switch (this) {
-            case EAST -> new Vector2d(1, 0);
-            case WEST -> new Vector2d(-1, 0);
             case NORTH -> new Vector2d(0, 1);
-            case SOUTH -> new Vector2d(0, -1);
             case NORTHEAST -> new Vector2d(1, 1);
-            case NORTHWEST -> new Vector2d(-1, 1);
+            case EAST -> new Vector2d(1, 0);
             case SOUTHEAST -> new Vector2d(1, -1);
+            case SOUTH -> new Vector2d(0, -1);
             case SOUTHWEST -> new Vector2d(-1, -1);
+            case WEST -> new Vector2d(-1, 0);
+            case NORTHWEST -> new Vector2d(-1, 1);
         };
     }
 
@@ -52,21 +52,22 @@ public enum MapDirection {
 
     public int toInt() {
         return switch (this) {
-            case EAST -> 2;
-            case WEST -> 6;
             case NORTH -> 0;
-            case SOUTH -> 4;
             case NORTHEAST -> 1;
-            case NORTHWEST -> 7;
+            case EAST -> 2;
             case SOUTHEAST -> 3;
+            case SOUTH -> 4;
             case SOUTHWEST -> 5;
+            case WEST -> 6;
+            case NORTHWEST -> 7;
         };
     }
-    public MapDirection add(MapDirection d){
-        return fromInt((this.toInt()+d.toInt())%8);
+
+    public MapDirection add(int rotation) {
+        return fromInt((this.toInt() + rotation) % 8);
     }
 
-    public MapDirection reverse(){
-        return MapDirection.fromInt((toInt()+4)%8);
+    public MapDirection reverse() {
+        return MapDirection.fromInt((toInt() + 4) % 8);
     }
 }

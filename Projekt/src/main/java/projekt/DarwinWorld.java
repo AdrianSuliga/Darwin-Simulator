@@ -1,5 +1,6 @@
 package projekt;
 
+import projekt.model.MapDirection;
 import projekt.model.Vector2d;
 import projekt.model.WorldMap;
 

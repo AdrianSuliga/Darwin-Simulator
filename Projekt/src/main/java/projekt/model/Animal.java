@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Animal implements WorldElement {
     private Vector2d position;
-    private MapDirection direction;//todo do usuniecia
+    private MapDirection direction;
     private int energy;
     private final List<Integer> genes;
     private int activeGeneIdx;
@@ -18,10 +18,10 @@ public class Animal implements WorldElement {
 
     public Animal(Vector2d position, int energy, List<Integer> genes) {
         this.position = position;
-        this.direction = MapDirection.fromInt((int)(Math.random() * 7));
+        this.direction = MapDirection.fromInt((int)(Math.random() * 8));
         this.energy = energy;
         this.genes = new ArrayList<>(genes);
-        this.activeGeneIdx = (int)(Math.random() * (this.genes.size() - 1));
+        this.activeGeneIdx = (int)(Math.random() * this.genes.size());
         this.daysLived = 1;
         this.plantsEaten = 0;
         this.childrenMade = 0;
@@ -32,20 +32,17 @@ public class Animal implements WorldElement {
         return this.position.equals(position);
     }
 
-
-    //zwierzak obraca się, potem idzie w daną strone
-    public void move(int energyConsumed,/*WorldMap map*/) {
-        direction = direction.add(MapDirection.fromInt(genes.get(activeGeneIdx))); //dodajemy do obecnego kierunku ten z genomu
+    // zwierzak obraca się, potem idzie w daną strone
+    public void move(int energyConsumed) {
+        direction = direction.add(genes.get(activeGeneIdx)); // dodajemy do obecnego kierunku ten z genomu
         position = position.add(direction.toUnitVector());
-        //map.moveAnimal(this, direction);
-        activeGeneIdx = (activeGeneIdx+1)%genes.size();
+        activeGeneIdx = (activeGeneIdx + 1) % genes.size();
         this.energy -= energyConsumed;
         this.daysLived++;
         if (this.energy <= 0) {
             this.deathDay = this.daysLived;
         }
     }
-
 
     public void eat(int energyGranted) {
         this.energy += energyGranted;
@@ -60,6 +57,11 @@ public class Animal implements WorldElement {
     @Override
     public Vector2d getPosition() {
         return this.position;
+    }
+
+    @Override
+    public String toString() {
+        return position.toString() + " " + direction.toString();
     }
 
     public MapDirection getDirection() {
@@ -100,10 +102,5 @@ public class Animal implements WorldElement {
 
     public void setDirection(MapDirection direction) {
         this.direction = direction;
-    }
-
-    @Override
-    public String toString() {
-        return position.toString() + " " + direction.toString();
     }
 }
