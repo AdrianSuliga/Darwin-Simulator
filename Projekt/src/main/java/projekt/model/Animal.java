@@ -61,7 +61,7 @@ public class Animal implements WorldElement {
 
     @Override
     public String toString() {
-        return position.toString() + " " + direction.toString();
+        return direction.toString() + " " + this.energy;
     }
 
     public MapDirection getDirection() {
