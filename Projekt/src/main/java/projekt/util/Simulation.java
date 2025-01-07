@@ -1,8 +1,6 @@
 package projekt.util;
 
-import projekt.model.Animal;
-import projekt.model.Vector2d;
-import projekt.model.WorldMap;
+import projekt.model.*;
 
 import java.util.*;
 
@@ -46,8 +44,17 @@ public class Simulation {
             animalMap.put(animal.getPosition(), animalSet);
         }
 
+        MapMovementLogicHandler movementLogicHandler;
+
+        if(specialMapLogic){
+            movementLogicHandler=new PolarLogic();
+        } else {
+            movementLogicHandler = new GlobeLogic();
+        }
+
         this.worldMap = new WorldMap(new Vector2d(mapWidth - 1, mapHeight - 1),
-                new Vector2d(0, 0), animalMap, 1, this.plantsPerDay);
+                new Vector2d(0, 0), animalMap, 1,
+                this.plantsPerDay,movementLogicHandler);
     }
 
     public void run() {
@@ -71,12 +78,7 @@ public class Simulation {
     }
 
     private void moveAnimals() {
-        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
-            HashSet<Animal> animals = this.worldMap.getAnimalMap().get(mapPosition);
-            for (Animal animal: animals) {
-                animal.move(this.worldMap.getDefaultEnergyConsumption());
-            }
-        }
+        this.worldMap.moveAnimals();
     }
 
     private void consumePlants() {

@@ -13,19 +13,24 @@ public class WorldMap {
     private final RandomPositionGenerator rpg;
     private final MapVisualizer visualizer;
 
+    private final Set<Animal> changedAnimalsBuffer = new HashSet<>();
     private final int defaultEnergyConsumption;
     private final int plantsPerDay;
+
+    private MapMovementLogicHandler movementLogicHandler;
 
     private MapMovementLogicHandler mapLogic; // uzywamy, by określić zmiane pozycji i koszt energii
 
     public WorldMap(Vector2d upperRight, Vector2d lowerLeft, Map<Vector2d, HashSet<Animal>> animalMap,
-                    int defaultEnergyConsumption, int plantsPerDay) {
+                    int defaultEnergyConsumption, int plantsPerDay, MapMovementLogicHandler movementLogicHandler) {
         this.boundary = new Boundary(upperRight,lowerLeft);
         this.defaultEnergyConsumption = defaultEnergyConsumption;
         this.plantsPerDay = plantsPerDay;
         this.rpg = new RandomPositionGenerator(this);
         this.visualizer  = new MapVisualizer(this);
         this.animalMap = animalMap;
+        this.movementLogicHandler = movementLogicHandler;
+
     }
 
     public int getDefaultEnergyConsumption() {
@@ -71,6 +76,33 @@ public class WorldMap {
         if (animalMap.containsKey(position)) {
             return animalMap.get(position).stream().findFirst().orElse(null);
         } else return plantList.getOrDefault(position, null);
+    }
+
+    public void moveAnimals(){
+        //zmiany pozycji
+        for (Vector2d mapPosition: animalMap.keySet()) {
+            HashSet<Animal> animals = animalMap.get(mapPosition);
+            for (Animal animal: animals) {
+                animal.move(getDefaultEnergyConsumption());
+            }
+        }
+        //update setów
+        for (Vector2d mapPosition: animalMap.keySet()) {
+            HashSet<Animal> animals = animalMap.get(mapPosition);
+            for (Animal animal: animals) {
+                if(!mapPosition.equals(animal.getPosition())){
+                    animals.remove(animal);
+                    if(animalMap.get(animal.getPosition())!=null){
+                        animalMap.get(animal.getPosition()).add(animal);
+                    }else{
+                        HashSet<Animal> newAnimalsSet = new HashSet<>();
+                        newAnimalsSet.add(animal);
+                        animalMap.put(animal.getPosition(),newAnimalsSet);
+                        System.out.println(animal.getPosition());
+                    }
+                }
+            }
+        }
     }
 
     @Override
