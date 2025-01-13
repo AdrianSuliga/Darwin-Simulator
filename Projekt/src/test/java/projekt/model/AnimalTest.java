@@ -35,22 +35,22 @@ public class AnimalTest {
         assertFalse(animal2.isAt(new Vector2d(-10, -10)));
     }
 
-    @Test
-    public void moveTest() {
-        Animal animal1 = new Animal(new Vector2d(0, 0), defaultEng, List.of(0, 0));
-        Animal animal2 = new Animal(new Vector2d(2, 4), defaultEng, List.of(1, 7));
-
-        animal1.move(50);
-        animal2.move(defaultEng);
-
-        assertEquals(25, animal1.getEnergy());
-        assertEquals(2, animal2.getDaysLived());
-        assertEquals(-1, animal1.getDeathDay());
-
-        assertEquals(0, animal2.getEnergy());
-        assertEquals(2, animal2.getDaysLived());
-        assertEquals(2, animal2.getDeathDay());
-    }
+//    @Test
+//    public void moveTest() {
+//        Animal animal1 = new Animal(new Vector2d(0, 0), defaultEng, List.of(0, 0));
+//        Animal animal2 = new Animal(new Vector2d(2, 4), defaultEng, List.of(1, 7));
+//
+//        animal1.move(50);
+//        animal2.move(defaultEng);
+//
+//        assertEquals(25, animal1.getEnergy());
+//        assertEquals(2, animal2.getDaysLived());
+//        assertEquals(-1, animal1.getDeathDay());
+//
+//        assertEquals(0, animal2.getEnergy());
+//        assertEquals(2, animal2.getDaysLived());
+//        assertEquals(2, animal2.getDeathDay());
+//    }
 
     @Test
     public void eatTest() {

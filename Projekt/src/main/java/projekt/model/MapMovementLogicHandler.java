@@ -5,7 +5,7 @@ public abstract class MapMovementLogicHandler {
 
     public abstract int getEnergyConsumption(Animal animal);
 
-    public abstract void moveAnimal(Animal animal);
+    public abstract void moveAnimal(Animal animal,Vector2d newPosition);
 
     public void setMap(WorldMap map) {
         this.map = map;

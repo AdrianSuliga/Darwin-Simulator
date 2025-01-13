@@ -1,5 +1,6 @@
 package projekt.model;
 
+import javafx.util.Pair;
 import projekt.interfaces.WorldElement;
 import projekt.util.MapVisualizer;
 import projekt.util.RandomPositionGenerator;
@@ -17,19 +18,22 @@ public class WorldMap {
     private final int defaultEnergyConsumption;
     private final int plantsPerDay;
 
+    private List<Pair<Vector2d, Animal>> animalChangeBuffer = new ArrayList<>();
+
     private MapMovementLogicHandler movementLogicHandler;
 
     private MapMovementLogicHandler mapLogic; // uzywamy, by określić zmiane pozycji i koszt energii
 
     public WorldMap(Vector2d upperRight, Vector2d lowerLeft, Map<Vector2d, HashSet<Animal>> animalMap,
                     int defaultEnergyConsumption, int plantsPerDay, MapMovementLogicHandler movementLogicHandler) {
-        this.boundary = new Boundary(upperRight,lowerLeft);
+        this.boundary = new Boundary(upperRight, lowerLeft);
         this.defaultEnergyConsumption = defaultEnergyConsumption;
         this.plantsPerDay = plantsPerDay;
         this.rpg = new RandomPositionGenerator(this);
-        this.visualizer  = new MapVisualizer(this);
+        this.visualizer = new MapVisualizer(this);
         this.animalMap = animalMap;
         this.movementLogicHandler = movementLogicHandler;
+        this.movementLogicHandler.setMap(this);
 
     }
 
@@ -37,12 +41,12 @@ public class WorldMap {
         return defaultEnergyConsumption;
     }
 
-    public int getHeight(){
-        return boundary.upperRight().getY()+1-boundary.lowerLeft().getY();
+    public int getHeight() {
+        return boundary.upperRight().getY() + 1 - boundary.lowerLeft().getY();
     }
 
-    public int getWidth(){
-        return boundary.upperRight().getX()+1-boundary.lowerLeft().getX();
+    public int getWidth() {
+        return boundary.upperRight().getX() + 1 - boundary.lowerLeft().getX();
     }
 
     public Boundary getBoundary() {
@@ -63,7 +67,7 @@ public class WorldMap {
 
     public void spawnPlants() {
         List<Vector2d> chosenPositions = rpg.generateNewPlants();
-        for (Vector2d position: chosenPositions) {
+        for (Vector2d position : chosenPositions) {
             plantList.put(position, new Plant(position));
         }
     }
@@ -78,35 +82,39 @@ public class WorldMap {
         } else return plantList.getOrDefault(position, null);
     }
 
-    public void moveAnimals(){
-        //zmiany pozycji
-        for (Vector2d mapPosition: animalMap.keySet()) {
-            HashSet<Animal> animals = animalMap.get(mapPosition);
-            for (Animal animal: animals) {
-                animal.move(getDefaultEnergyConsumption());
+    public void updateAnimals() {
+        //pobieramy po kolei zmiany z bufora,
+        for (Pair<Vector2d, Animal> pair : animalChangeBuffer) {
+            animalMap.get(pair.getKey()).remove(pair.getValue());
+            if (animalMap.get(pair.getValue().getPosition()) == null) {//jeśli set nie istnieje
+                HashSet<Animal> newSet = new HashSet<>();
+                newSet.add(pair.getValue());
+                animalMap.put(pair.getValue().getPosition(), newSet);
+            } else {
+                animalMap.get(pair.getValue().getPosition()).add(pair.getValue());
             }
+
         }
-        //update setów
-        for (Vector2d mapPosition: animalMap.keySet()) {
-            HashSet<Animal> animals = animalMap.get(mapPosition);
-            for (Animal animal: animals) {
-                if(!mapPosition.equals(animal.getPosition())){
-                    animals.remove(animal);
-                    if(animalMap.get(animal.getPosition())!=null){
-                        animalMap.get(animal.getPosition()).add(animal);
-                    }else{
-                        HashSet<Animal> newAnimalsSet = new HashSet<>();
-                        newAnimalsSet.add(animal);
-                        animalMap.put(animal.getPosition(),newAnimalsSet);
-                        System.out.println(animal.getPosition());
+        animalChangeBuffer.clear();
+    }
+
+        public void moveAnimals () {
+            //zmiany pozycji
+            for (Vector2d mapPosition : animalMap.keySet()) {
+                HashSet<Animal> animals = animalMap.get(mapPosition);
+                for (Animal animal : animals) {
+                    animal.move(this.movementLogicHandler);
+                    if (!animal.getPosition().equals(mapPosition)) {
+                        animalChangeBuffer.add(new Pair<>(mapPosition, animal));
                     }
                 }
             }
+            //update setów
+            updateAnimals();
+        }
+
+        @Override
+        public String toString () {
+            return this.visualizer.draw(this.boundary.lowerLeft(), this.boundary.upperRight());
         }
     }
-
-    @Override
-    public String toString() {
-        return this.visualizer.draw(this.boundary.lowerLeft(), this.boundary.upperRight());
-    }
-}
