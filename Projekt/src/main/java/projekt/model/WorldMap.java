@@ -13,6 +13,7 @@ public class WorldMap {
     private Map<Vector2d, Plant> plantList = new HashMap<>();
     private final Boundary boundary;// mapa to obszar od (0,0) do (x,y)
     private final RandomPositionGenerator rpg;
+    private final AnimalComparator comparator;
     private final MapVisualizer visualizer;
 
     private final Set<Animal> changedAnimalsBuffer = new HashSet<>();
@@ -35,7 +36,7 @@ public class WorldMap {
         this.animalMap = animalMap;
         this.movementLogicHandler = movementLogicHandler;
         this.movementLogicHandler.setMap(this);
-
+        this.comparator = new AnimalComparator();
     }
 
     public int getDefaultEnergyConsumption() {
@@ -114,30 +115,18 @@ public class WorldMap {
             updateAnimals();
         }
 
-        private List<Animal> sortAnimalsSet(HashSet<Animal> animals) {
-            List<Animal> resultList = animals.stream()
-                    .filter(animal -> animal.getDeathDay()==-1)//żywe
-                    .sorted(new AnimalComparator())
+        public List<Animal> getBreedingAnimalsList(HashSet<Animal> animals, int requiredEnergy) {
+            return animals
+                    .stream()
+                    .filter(animal -> animal.getEnergy() >= requiredEnergy)
+                    .filter(animal -> animal.getDeathDay() == -1)
                     .toList();
-            return resultList;
-        }
-
-        public List<Animal> getBreedingAnimalsList(HashSet<Animal> animals, int requiredEnergy){
-            List<Animal> breedableList = sortAnimalsSet(animals).stream()
-                    .filter(animal -> animal.getEnergy()>=requiredEnergy)
-                    .toList();
-            return breedableList;
-        }
-
-        public Animal getStrongestAnimal(HashSet<Animal> animals){
-            System.out.println(sortAnimalsSet(animals));
-            return sortAnimalsSet(animals).get(0);
         }
 
         public void consumePlants(int energyPerPlant){
             for(Vector2d mapPosition: animalMap.keySet()){
                 if(plantList.containsKey(mapPosition)){
-                    Animal winningAnimal = getStrongestAnimal(animalMap.get(mapPosition));
+                    Animal winningAnimal = comparator.compare(animalMap.get(mapPosition));
                     winningAnimal.eat(energyPerPlant);
                     plantList.remove(mapPosition);
                 }
@@ -155,7 +144,7 @@ public class WorldMap {
 
         private int getAnimalsCount(){
             return animalMap.values().stream()
-                    .mapToInt(set -> set.size())
+                    .mapToInt(HashSet::size)
                     .sum();
         }
 
