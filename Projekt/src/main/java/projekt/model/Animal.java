@@ -33,11 +33,12 @@ public class Animal implements WorldElement {
     }
 
     // zwierzak obraca się, potem idzie w daną strone
-    public void move(int energyConsumed) {
+    public void move(MapMovementLogicHandler handler) {
         direction = direction.add(genes.get(activeGeneIdx)); // dodajemy do obecnego kierunku ten z genomu
-        position = position.add(direction.toUnitVector());
+        Vector2d newPosition = position.add(direction.toUnitVector());
         activeGeneIdx = (activeGeneIdx + 1) % genes.size();
-        this.energy -= energyConsumed;
+        this.energy -= handler.getEnergyConsumption(this);
+        handler.moveAnimal(this,newPosition);
         this.daysLived++;
         if (this.energy <= 0) {
             this.deathDay = this.daysLived;
@@ -102,5 +103,13 @@ public class Animal implements WorldElement {
 
     public void setDirection(MapDirection direction) {
         this.direction = direction;
+    }
+
+    public void setDaysLived(int daysLived) {
+        this.daysLived = daysLived;
+    }
+
+    public void setChildrenMade(int childrenMade) {
+        this.childrenMade = childrenMade;
     }
 }

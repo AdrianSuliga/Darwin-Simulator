@@ -9,8 +9,7 @@ public class PolarLogic extends MapMovementLogicHandler{
     }
 
     @Override
-    public void moveAnimal(Animal animal) {
-        Vector2d newPosition = animal.getPosition().add(animal.getDirection().toUnitVector());
+    public void moveAnimal(Animal animal, Vector2d newPosition) {
         if(newPosition.follows(map.getBoundary().lowerLeft()) &&
                 newPosition.precedes(map.getBoundary().upperRight())){
             animal.setPosition(newPosition);
