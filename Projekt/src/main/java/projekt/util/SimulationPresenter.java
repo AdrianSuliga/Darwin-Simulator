@@ -40,10 +40,6 @@ public class SimulationPresenter {
     @FXML
     private TextField geneLengthInput;
 
-    public SimulationPresenter() {
-
-    }
-
     @FXML
     private void createSimulation() {
         // Get map data from controls
@@ -96,7 +92,7 @@ public class SimulationPresenter {
     }
 
     private void run() {
-        this.simulation.run();
+        new Thread(() -> this.simulation.run()).start();
     }
 
     private int parseIntInput(TextField input) {

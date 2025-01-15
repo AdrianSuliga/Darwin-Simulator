@@ -2,24 +2,31 @@ package projekt.util;
 
 import projekt.model.Animal;
 
-import java.util.Comparator;
-import java.util.Random;
+import java.util.*;
 
-public class AnimalComparator implements Comparator<Animal> {
-    @Override
-    public int compare(Animal o1, Animal o2) {
-        if(o1.getEnergy() != o2.getEnergy()){
-            return o2.getEnergy()-o1.getEnergy();
-        } else if(o1.getDaysLived() != o2.getDaysLived()){
-            return o2.getDaysLived()-o1.getDaysLived();
-        } else if (o1.getChildrenMade() != o2.getChildrenMade()) {
-            return o2.getChildrenMade()-o1.getChildrenMade();
-        } else {
-            Random random=new Random();
-            if(random.nextBoolean()) {
-                return 1;
-            }
-            return -1;
+public class AnimalComparator  {
+
+    public Animal compare(HashSet<Animal> animals) {
+        Optional<Animal> maxEnergyAnimal = animals.stream().max(Comparator.comparing(Animal::getEnergy));
+
+        if (maxEnergyAnimal.isPresent()) {
+            return maxEnergyAnimal.get();
         }
+
+        Optional<Animal> maxAgeAnimal = animals.stream().max(Comparator.comparing(Animal::getDaysLived));
+
+        if (maxAgeAnimal.isPresent()) {
+            return maxAgeAnimal.get();
+        }
+
+        Optional<Animal> maxChildrenAnimal = animals.stream().max(Comparator.comparing(Animal::getChildrenMade));
+
+        if (maxChildrenAnimal.isPresent()) {
+            return maxChildrenAnimal.get();
+        }
+
+        int randIdx = (int)(Math.floor(Math.random() * animals.size()));
+        ArrayList<Animal> result = new ArrayList<>(animals);
+        return result.get(randIdx);
     }
 }

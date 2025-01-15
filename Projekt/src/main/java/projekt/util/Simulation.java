@@ -44,21 +44,15 @@ public class Simulation {
 
         MapMovementLogicHandler movementLogicHandler;
 
-        if(specialMapLogic){
-            movementLogicHandler=new PolarLogic();
+        if (specialMapLogic) {
+            movementLogicHandler = new PolarLogic();
         } else {
             movementLogicHandler = new GlobeLogic();
         }
 
-        if(specialMutationLogic) {
-            geneMutator = new StepMutator(minMutationCount, maxMutationCount);
-        }else{
-            geneMutator = new RandomMutator(minMutationCount,maxMutationCount);
-        }
-
         this.worldMap = new WorldMap(new Vector2d(mapWidth - 1, mapHeight - 1),
                 new Vector2d(0, 0), animalMap, 1,
-                plantsPerDay,movementLogicHandler);
+                plantsPerDay, movementLogicHandler);
     }
 
     public void run() {
@@ -80,7 +74,6 @@ public class Simulation {
 
     private void removeDeadAnimals() {
         this.animalsCount = this.worldMap.removeDeadAnimals();
-
     }
 
     private void moveAnimals() {
@@ -91,10 +84,9 @@ public class Simulation {
         this.worldMap.consumePlants(this.energyGainedOnConsumption);
     }
 
-
     private void breedAnimals() {
         for (Vector2d position: this.worldMap.getAnimalMap().keySet()) {
-            List<Animal> animals = this.worldMap.getBreedingAnimalsList(this.worldMap.getAnimalMap().get(position),energyConsumedOnBreeding);
+            List<Animal> animals = this.worldMap.getBreedingAnimalsList(this.worldMap.getAnimalMap().get(position), energyForBreeding);
             if (animals.size() < 2) {
                 continue;
             }
@@ -110,7 +102,6 @@ public class Simulation {
         }
     }
 
-
     private Animal getRandomAnimal(int maxX, int maxY) {
         List<Integer> genes = new ArrayList<>();
         int randX = (int)(Math.floor(Math.random() * maxX));
@@ -122,7 +113,4 @@ public class Simulation {
 
         return new Animal(new Vector2d(randX, randY), this.animalsStartingEnergy, genes);
     }
-
-
-
 }
