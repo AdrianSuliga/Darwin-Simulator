@@ -115,7 +115,10 @@ public class WorldMap {
         }
 
         private List<Animal> sortAnimalsSet(HashSet<Animal> animals) {
-            List<Animal> resultList = animals.stream().sorted(new AnimalComparator()).toList();
+            List<Animal> resultList = animals.stream()
+                    .filter(animal -> animal.getDeathDay()>-1)
+                    .sorted(new AnimalComparator())
+                    .toList();
             return resultList;
         }
 
@@ -133,14 +136,20 @@ public class WorldMap {
             }
         }
 
-        public void removeDeadAnimals(){
+        public int removeDeadAnimals(){
             for(Vector2d mapPosition: animalMap.keySet()){
                 animalMap.get(mapPosition).removeIf(animal -> animal.getDeathDay()>-1);
             }
             animalMap.entrySet().removeIf(entry->entry.getValue().isEmpty());
+
+            return getAnimalsCount();
         }
 
-
+        private int getAnimalsCount(){
+            return animalMap.values().stream()
+                    .mapToInt(set -> set.size())
+                    .sum();
+        }
 
         @Override
         public String toString () {

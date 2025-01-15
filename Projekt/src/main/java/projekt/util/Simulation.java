@@ -10,7 +10,7 @@ public class Simulation {
     private final int plantsCount;
     private final int energyGainedOnConsumption;
     private final int plantsPerDay;
-    private final int animalsCount;
+    private int animalsCount;
     private final int animalsStartingEnergy;
     private final int energyForBreeding;
     private final int energyConsumedOnBreeding;
@@ -71,11 +71,8 @@ public class Simulation {
     }
 
     private void removeDeadAnimals() {
-//        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
-//            this.worldMap.getAnimalMap().get(mapPosition).removeIf(animal -> animal.getDeathDay() > -1);
-//        }
-//        this.worldMap.getAnimalMap().entrySet().removeIf(entry -> entry.getValue().isEmpty());
-        this.worldMap.removeDeadAnimals();
+        this.animalsCount = this.worldMap.removeDeadAnimals();
+
     }
 
     private void moveAnimals() {
