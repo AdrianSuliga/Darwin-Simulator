@@ -11,7 +11,7 @@ public class DarwinWorld {
         Simulation simulation = new Simulation(20, 20, 5,
                 5, 5, 3, 10,
                 10, 20, 5, 0,
-                0, false, false);
+                 false, false);
         simulation.run();
     }
 }
