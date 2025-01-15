@@ -116,13 +116,21 @@ public class WorldMap {
 
         private List<Animal> sortAnimalsSet(HashSet<Animal> animals) {
             List<Animal> resultList = animals.stream()
-                    .filter(animal -> animal.getDeathDay()>-1)
+                    .filter(animal -> animal.getDeathDay()==-1)//żywe
                     .sorted(new AnimalComparator())
                     .toList();
             return resultList;
         }
 
-        private Animal getStrongestAnimal(HashSet<Animal> animals){
+        public List<Animal> getBreedingAnimalsList(HashSet<Animal> animals, int requiredEnergy){
+            List<Animal> breedableList = sortAnimalsSet(animals).stream()
+                    .filter(animal -> animal.getEnergy()>=requiredEnergy)
+                    .toList();
+            return breedableList;
+        }
+
+        public Animal getStrongestAnimal(HashSet<Animal> animals){
+            System.out.println(sortAnimalsSet(animals));
             return sortAnimalsSet(animals).get(0);
         }
 
