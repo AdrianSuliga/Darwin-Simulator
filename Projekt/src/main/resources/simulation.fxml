@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import java.lang.String?>
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            minHeight="750.0" minWidth="450.0"
+            fx:controller="projekt.util.SimulationPresenter">
+    <center>
+        <VBox alignment="CENTER" spacing="10" style="-fx-padding: 20 20 20 20;">
+            <Label text="World Map" textAlignment="CENTER"/>
+            <HBox alignment="CENTER" spacing="20">
+                <Label text="Map width"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="widthInput" promptText="10" />
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+                <Label text="Map height"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="heightInput" promptText="10" />
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+                <Label text="Map Variant: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <ChoiceBox fx:id="mapVariantBox" value="globe">
+                    <String fx:value="globe"/>
+                    <String fx:value="poles"/>
+                </ChoiceBox>
+            </HBox>
+            <Label text="Plants" textAlignment="CENTER"/>
+            <HBox alignment="CENTER" spacing="20">
+                <Label text="Initial number of plants: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="initPlantsCountInput" promptText="10"/>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+                <Label text="Energy gained on consumption"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="energyOnConsumptionInput" promptText="5"/>
+            </HBox>
+            <HBox alignment="CENTER" spacing="20">
+                <Label text="Plants growing per day: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="plantsPerDayInput" promptText="10"/>
+            </HBox>
+            <Label text="Animals" textAlignment="CENTER"/>
+            <HBox alignment="CENTER">
+                <Label text="Initial number of animals: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="initAnimalCountInput" promptText="5"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Initial energy of animals: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="initAnimalEnergyInput" promptText="20"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Energy needed for breeding"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="energyForBreedingInput" promptText="15"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Energy consumed on breeding"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="energyOnBreedingInput" promptText="5"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Min mutation count: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="minMutationInput" promptText="0"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Max mutation count: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="maxMutationInput" promptText="10"/>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Mutation Variant: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <ChoiceBox fx:id="mutationVariantChoice" value="random">
+                    <String fx:value="random"/>
+                    <String fx:value="slight correction"/>
+                </ChoiceBox>
+            </HBox>
+            <HBox alignment="CENTER">
+                <Label text="Animal genes length: "/>
+                <Region HBox.hgrow="ALWAYS" />
+                <TextField fx:id="geneLengthInput" promptText="10"/>
+            </HBox>
+            <Button text="START" alignment="CENTER" onAction="#createSimulation"/>
+        </VBox>
+    </center>
+</BorderPane>
