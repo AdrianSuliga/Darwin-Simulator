@@ -24,3 +24,4 @@ out/
 # Default ignored files
 .idea/shelf/
 .idea/workspace.xml
+/src/main/java/projekt/SmallTestingDemo.java
