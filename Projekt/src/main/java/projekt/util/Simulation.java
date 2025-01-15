@@ -8,27 +8,23 @@ import java.util.*;
 
 public class Simulation {
     private WorldMap worldMap;
+    private int animalsCount;
     private final boolean specialMapLogic;
-    private final int plantsCount;
     private final int energyGainedOnConsumption;
-    private final int plantsPerDay;
-    private final int animalsCount;
     private final int animalsStartingEnergy;
     private final int energyForBreeding;
     private final int energyConsumedOnBreeding;
     private final int minMutationCount;
     private final int maxMutationCount;
-    private final boolean specialMutationLogic;
+    private final boolean specialMutationLogic; // false - [1], true - [2]
     private final int animalsGeneLength;
 
-    public Simulation(int mapWidth, int mapHeight, int defaultPlantsCount, int energyGainedOnConsumption,
+    public Simulation(int mapWidth, int mapHeight, int energyGainedOnConsumption,
                       int plantsPerDay, int animalsCount, int animalsGeneLength, int animalsStartingEnergy,
                       int energyForBreeding, int energyConsumedOnBreeding, int minMutationCount,
                       int maxMutationCount, boolean specialMutationLogic, boolean specialMapLogic) {
         this.specialMapLogic = specialMapLogic;
-        this.plantsCount = defaultPlantsCount;
         this.energyGainedOnConsumption = energyGainedOnConsumption;
-        this.plantsPerDay = plantsPerDay;
         this.animalsCount = animalsCount;
         this.animalsStartingEnergy = animalsStartingEnergy;
         this.energyForBreeding = energyForBreeding;
@@ -47,42 +43,47 @@ public class Simulation {
         }
 
         this.worldMap = new WorldMap(new Vector2d(mapWidth - 1, mapHeight - 1),
-                new Vector2d(0, 0), animalMap, 1, this.plantsPerDay);
+                new Vector2d(0, 0), animalMap, 1, plantsPerDay);
     }
 
     public void run() {
-        int testCnt = 0;
-        while (testCnt < 20) {
+        System.out.println(this.worldMap);
+        while (!this.worldMap.getAnimalMap().isEmpty()) {
             removeDeadAnimals();
-            moveAnimals();
             consumePlants();
             breedAnimals();
             this.worldMap.spawnPlants();
             System.out.println(this.worldMap.toString());
-            testCnt++;
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     private void removeDeadAnimals() {
+        int deadAnimalsCount = 0;
+        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
+            for (Animal animal: this.worldMap.getAnimalMap().get(mapPosition)) {
+                if (animal.getDeathDay() > -1) {
+                    deadAnimalsCount++;
+                }
+            }
+        }
+
         for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
             this.worldMap.getAnimalMap().get(mapPosition).removeIf(animal -> animal.getDeathDay() > -1);
         }
-        this.worldMap.getAnimalMap().entrySet().removeIf(entry -> entry.getValue().isEmpty());
-    }
 
-    private void moveAnimals() {
-        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
-            HashSet<Animal> animals = this.worldMap.getAnimalMap().get(mapPosition);
-            for (Animal animal: animals) {
-                animal.move(this.worldMap.getDefaultEnergyConsumption());
-            }
-        }
+        this.worldMap.getAnimalMap().entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        this.animalsCount -= deadAnimalsCount;
     }
 
     private void consumePlants() {
         for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
             if (this.worldMap.getPlantList().containsKey(mapPosition)) {
-                HashSet<Animal> animals = this.worldMap.getAnimalMap().get(mapPosition);
+                HashSet<Animal> animals = new HashSet<>(this.worldMap.getAnimalMap().get(mapPosition));
                 Animal winningAnimal = compareAnimals(animals);
                 winningAnimal.eat(this.energyGainedOnConsumption);
                 this.worldMap.getPlantList().remove(mapPosition);
@@ -91,7 +92,61 @@ public class Simulation {
     }
 
     private void breedAnimals() {
-        // breeding logic
+        for (Vector2d position: this.worldMap.getAnimalMap().keySet()) {
+            HashSet<Animal> animals = new HashSet<>(this.worldMap.getAnimalMap().get(position).stream().
+                    filter(animal -> animal.getEnergy() >= this.energyForBreeding).toList());
+            if (animals.size() < 2) {
+                continue;
+            }
+            Animal animal1 = compareAnimals(animals);
+            animals.remove(animal1);
+            Animal animal2 = compareAnimals(animals);
+
+            animal1.breed(this.energyConsumedOnBreeding);
+            animal2.breed(this.energyConsumedOnBreeding);
+
+            int energy1 = animal1.getEnergy(), energy2 = animal2.getEnergy();
+            double divisionPoint = (double)energy1 / (energy1 + energy2);
+            int divisionGenIndex = (int)(divisionPoint * this.animalsGeneLength);
+            ArrayList <Integer> newGenes;
+
+            if (Math.random() < 0.5) { // take left genes from first parent, right from second
+                newGenes = new ArrayList<>(animal1.getGenes().subList(0, divisionGenIndex));
+                newGenes.addAll(animal2.getGenes().subList(divisionGenIndex, this.animalsGeneLength));
+            } else { // take right genes from first parent, left from second
+                newGenes = new ArrayList<>(animal2.getGenes().subList(0, this.animalsGeneLength - divisionGenIndex));
+                newGenes.addAll(animal1.getGenes().subList(this.animalsGeneLength - divisionGenIndex, this.animalsGeneLength));
+            }
+
+            mutateGenes(newGenes, this.minMutationCount, this.maxMutationCount);
+
+            Animal newBorn = new Animal(position, 2 * this.energyForBreeding, newGenes);
+            this.worldMap.getAnimalMap().get(position).add(newBorn);
+        }
+    }
+
+    private void mutateGenes(ArrayList<Integer> genes, int minMutationCount, int maxMutationCount) {
+        int mutationCount = (int)(Math.random() * (maxMutationCount - minMutationCount + 1) + minMutationCount);
+        mutationCount = Math.min(mutationCount, this.animalsGeneLength);
+
+        ArrayList<Integer> resultIndexes = new ArrayList<>();
+
+        for (int i = 0; i < this.animalsGeneLength; i++) {
+            resultIndexes.add(i);
+        }
+
+        for (int i = 0; i < mutationCount; i++) {
+            int randIdx = (int)(Math.floor(Math.random() * resultIndexes.size()));
+            int randomGeneIdx = resultIndexes.get(randIdx);
+            int gene = genes.get(randomGeneIdx);
+            if (specialMutationLogic) {
+                gene = Math.random() < 0.5 ? gene - 1 : gene + 1;
+            } else {
+                gene = (int)(Math.floor(Math.random() * 8));
+            }
+            genes.set(randomGeneIdx, gene);
+            resultIndexes.remove(randIdx);
+        }
     }
 
     private Animal getRandomAnimal(int maxX, int maxY) {
