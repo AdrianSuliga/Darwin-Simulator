@@ -2,6 +2,7 @@ package projekt.model;
 
 import javafx.util.Pair;
 import projekt.interfaces.WorldElement;
+import projekt.util.AnimalComparator;
 import projekt.util.MapVisualizer;
 import projekt.util.RandomPositionGenerator;
 
@@ -112,6 +113,34 @@ public class WorldMap {
             //update setów
             updateAnimals();
         }
+
+        private List<Animal> sortAnimalsSet(HashSet<Animal> animals) {
+            List<Animal> resultList = animals.stream().sorted(new AnimalComparator()).toList();
+            return resultList;
+        }
+
+        private Animal getStrongestAnimal(HashSet<Animal> animals){
+            return sortAnimalsSet(animals).get(0);
+        }
+
+        public void consumePlants(int energyPerPlant){
+            for(Vector2d mapPosition: animalMap.keySet()){
+                if(plantList.containsKey(mapPosition)){
+                    Animal winningAnimal = getStrongestAnimal(animalMap.get(mapPosition));
+                    winningAnimal.eat(energyPerPlant);
+                    plantList.remove(mapPosition);
+                }
+            }
+        }
+
+        public void removeDeadAnimals(){
+            for(Vector2d mapPosition: animalMap.keySet()){
+                animalMap.get(mapPosition).removeIf(animal -> animal.getDeathDay()>-1);
+            }
+            animalMap.entrySet().removeIf(entry->entry.getValue().isEmpty());
+        }
+
+
 
         @Override
         public String toString () {

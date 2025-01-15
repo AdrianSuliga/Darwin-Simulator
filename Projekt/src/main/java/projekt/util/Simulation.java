@@ -71,10 +71,11 @@ public class Simulation {
     }
 
     private void removeDeadAnimals() {
-        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
-            this.worldMap.getAnimalMap().get(mapPosition).removeIf(animal -> animal.getDeathDay() > -1);
-        }
-        this.worldMap.getAnimalMap().entrySet().removeIf(entry -> entry.getValue().isEmpty());
+//        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
+//            this.worldMap.getAnimalMap().get(mapPosition).removeIf(animal -> animal.getDeathDay() > -1);
+//        }
+//        this.worldMap.getAnimalMap().entrySet().removeIf(entry -> entry.getValue().isEmpty());
+        this.worldMap.removeDeadAnimals();
     }
 
     private void moveAnimals() {
@@ -82,14 +83,7 @@ public class Simulation {
     }
 
     private void consumePlants() {
-        for (Vector2d mapPosition: this.worldMap.getAnimalMap().keySet()) {
-            if (this.worldMap.getPlantList().containsKey(mapPosition)) {
-                HashSet<Animal> animals = this.worldMap.getAnimalMap().get(mapPosition);
-                Animal winningAnimal = compareAnimals(animals);
-                winningAnimal.eat(this.energyGainedOnConsumption);
-                this.worldMap.getPlantList().remove(mapPosition);
-            }
-        }
+        this.worldMap.consumePlants(this.energyGainedOnConsumption);
     }
 
     private void breedAnimals() {
@@ -108,29 +102,6 @@ public class Simulation {
         return new Animal(new Vector2d(randX, randY), this.animalsStartingEnergy, genes);
     }
 
-    private Animal compareAnimals(HashSet<Animal> animals) {
-        int maxEnergy = animals.stream().mapToInt(Animal::getEnergy).max().orElse(Integer.MIN_VALUE);
-        List <Animal> result = animals.stream().filter(animal -> animal.getEnergy() == maxEnergy).toList();
 
-        if (result.size() == 1) {
-            return result.getFirst();
-        }
 
-        int maxAge = result.stream().mapToInt(Animal::getDaysLived).max().orElse(Integer.MIN_VALUE);
-        result = result.stream().filter(animal -> animal.getDaysLived() == maxAge).toList();
-
-        if (result.size() == 1) {
-            return result.getFirst();
-        }
-
-        int maxChildren = result.stream().mapToInt(Animal::getChildrenMade).max().orElse(Integer.MIN_VALUE);
-        result = result.stream().filter(animal -> animal.getChildrenMade() == maxChildren).toList();
-
-        if (result.size() == 1) {
-            return result.getFirst();
-        }
-
-        int randomIndex = (int)(Math.floor(Math.random() * result.size()));
-        return result.get(randomIndex);
-    }
 }

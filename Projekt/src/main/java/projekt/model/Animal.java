@@ -104,4 +104,12 @@ public class Animal implements WorldElement {
     public void setDirection(MapDirection direction) {
         this.direction = direction;
     }
+
+    public void setDaysLived(int daysLived) {
+        this.daysLived = daysLived;
+    }
+
+    public void setChildrenMade(int childrenMade) {
+        this.childrenMade = childrenMade;
+    }
 }
