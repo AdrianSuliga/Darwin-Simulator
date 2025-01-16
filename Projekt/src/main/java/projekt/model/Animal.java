@@ -112,4 +112,14 @@ public class Animal implements WorldElement {
     public void setChildrenMade(int childrenMade) {
         this.childrenMade = childrenMade;
     }
+
+    public String getStatistics(){
+        return "kierunek: "+direction+ '\n'
+                +"genom: "+genes+ '\n'
+                +"aktywny: "+genes.get(activeGeneIdx)+ '\n'
+                +"energia: "+energy+ '\n'
+                +"zjedzone rosliny: "+plantsEaten+ '\n'
+                +"ilosc dzieci: "+childrenMade+ '\n'
+                + (deathDay==-1 ? "wiek: "+daysLived+ '\n' : "dzien smierci: "+deathDay);
+    }
 }

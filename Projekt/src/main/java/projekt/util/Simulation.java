@@ -87,6 +87,10 @@ public class Simulation {
         this.worldMap.consumePlants(this.energyGainedOnConsumption);
     }
 
+    public Animal getStrongest(HashSet<Animal> animals){
+        return this.comparator.compare(animals);
+    }
+
     private void breedAnimals() {
         for (Vector2d position: this.worldMap.getAnimalMap().keySet()) {
             HashSet<Animal> animals = this.worldMap.getBreedingAnimalsSet(this.worldMap.getAnimalMap().get(position), energyForBreeding);
