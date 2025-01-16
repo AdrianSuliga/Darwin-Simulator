@@ -12,15 +12,18 @@ import projekt.util.Simulation;
 public class SimulationWindow implements MapChangeListener {
     private final Stage stage;
     private Label mapLabel;
+
+    private Label statLabel;
     private final Simulation simulation;
     private Thread simulationThread;
 
     public SimulationWindow(Simulation simulation) {
         stage = new Stage();
         mapLabel = new Label("Simulation map");
+        statLabel = new Label("Statistics");
         this.simulation = simulation;
         this.simulation.getWorldMap().registerObserver(this);
-        VBox layout = new VBox(10, mapLabel);
+        VBox layout = new VBox(10,statLabel, mapLabel);
         layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
         Scene scene = new Scene(layout, 300, 600);
@@ -47,9 +50,13 @@ public class SimulationWindow implements MapChangeListener {
     @Override
     public void mapChanged(WorldMap map) {
         String mapSnapshot;
+        String mapStats;
         synchronized (map) {
+            map.updateStatistics();
+            mapStats=map.getStatistics().toString();
             mapSnapshot = map.toString();
         }
-        Platform.runLater(() -> {mapLabel.setText(mapSnapshot);});
+        Platform.runLater(() -> {mapLabel.setText(mapSnapshot);
+                                    statLabel.setText(mapStats);});
     }
 }
