@@ -6,7 +6,7 @@
 - Setup projektu,
 - Enum MapDirection,
 - Klasa Vector2d,
-- Klasy GlobeLogic, MapMovementLogicHandler, WorldMap,
+- Klasy GlobeLogic, MapMovementLogicHandler, WorldMap, AbstractGeneMutator
 
 ### Adrian Suliga
 - Interfejs WorldElement,
