@@ -16,6 +16,10 @@ public class Simulation {
     private final AbstractGeneMutator geneMutator;
     private final AnimalComparator comparator;
 
+    public WorldMap getWorldMap() {
+        return worldMap;
+    }
+
     public Simulation(int mapWidth, int mapHeight, int energyGainedOnConsumption,
                       int plantsPerDay, int animalsCount, int animalsGeneLength, int animalsStartingEnergy,
                       int energyForBreeding, int energyConsumedOnBreeding, int minMutationCount,
@@ -56,18 +60,17 @@ public class Simulation {
     }
 
     public void run() {
-        System.out.println(this.worldMap);
-        while (!this.worldMap.getAnimalMap().isEmpty()) {
+        while (!this.worldMap.getAnimalMap().isEmpty() && !Thread.currentThread().isInterrupted()) {
+            this.worldMap.mapChanged();
             removeDeadAnimals();
             moveAnimals();
             consumePlants();
             breedAnimals();
             this.worldMap.spawnPlants();
-            System.out.println(this.worldMap.toString());
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }
