@@ -3,6 +3,7 @@ package projekt.model;
 import com.sun.javafx.scene.control.behavior.TwoLevelFocusBehavior;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -23,10 +24,15 @@ public class SimulationWindow implements MapChangeListener {
         statLabel = new Label("Statistics");
         this.simulation = simulation;
         this.simulation.getWorldMap().registerObserver(this);
-        VBox layout = new VBox(10,statLabel, mapLabel);
+        VBox statLayout = new VBox(10,statLabel);
+        VBox layout = new VBox(10,mapLabel);
+        BorderPane pane = new BorderPane();
         layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        statLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        pane.setLeft(statLayout);
+        pane.setCenter(layout);
 
-        Scene scene = new Scene(layout, 300, 600);
+        Scene scene = new Scene(pane, 300, 600);
         stage.setScene(scene);
         stage.setTitle("Simulation");
         stage.setOnCloseRequest(windowEvent -> stopSimulationInNewWindow());
