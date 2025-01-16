@@ -40,6 +40,8 @@ public class SimulationWindow implements MapChangeListener {
 
     private String mapStats;
 
+    private Statistics statistics;
+
     public SimulationWindow(Simulation simulation) {
         this.stage = new Stage();
 
@@ -121,16 +123,18 @@ public class SimulationWindow implements MapChangeListener {
 
     public void doWork(){
         try {
+            Platform.runLater(() -> {
+            statLabel.setText(mapStats);
+            this.drawMap();
+            });
+
             synchronized (this) {
                 while (!running) {
                     wait(); // Pause the thread
                 }
             }
             // Update the UI and draw the map when running
-            Platform.runLater(() -> {
-                statLabel.setText(mapStats);
-                this.drawMap();
-            });
+
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); // Restore interrupted status
             System.out.println("Thread interrupted!");
@@ -196,8 +200,10 @@ public class SimulationWindow implements MapChangeListener {
                 } else {
                     label = new Label(" ");
                 }
-                label.setStyle("-fx-border-color: black;" +
-                        "-fx-border-width: 1");
+                label.setStyle("-fx-border-color: black; -fx-border-width: 1;");
+                if(this.simulation.isPositionInEquator(j) && !running){
+                    label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-background-color: green;");
+                }
                 label.setAlignment(Pos.CENTER);
                 label.setPrefSize(cell_width, cell_height);
                 label.setOnMouseClicked(e->{

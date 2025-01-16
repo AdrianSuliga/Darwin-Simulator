@@ -196,4 +196,8 @@ public class WorldMap {
     public String toString() {
         return this.visualizer.draw(this.boundary.lowerLeft(), this.boundary.upperRight());
     }
+
+    public boolean isPositionInEquator(int y){
+        return this.rpg.isPositionInEquator(y);
+    }
 }

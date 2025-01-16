@@ -67,6 +67,7 @@ public class Simulation {
             consumePlants();
             breedAnimals();
             this.worldMap.spawnPlants();
+            this.worldMap.updateStatistics();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -123,5 +124,9 @@ public class Simulation {
         }
 
         return new Animal(new Vector2d(randX, randY), this.animalsStartingEnergy, genes);
+    }
+
+    public boolean isPositionInEquator(int y){
+        return this.worldMap.isPositionInEquator(y);
     }
 }

@@ -8,6 +8,8 @@ import java.util.List;
 
 public class RandomPositionGenerator {
     private final WorldMap map;
+    private int equatorMinHeight;
+    private int equatorMaxHeight;
 
     public RandomPositionGenerator(WorldMap map) {
         this.map = map;
@@ -20,8 +22,8 @@ public class RandomPositionGenerator {
         List<Vector2d> equatorPositions = new ArrayList<>();
         List<Vector2d> nonEquatorPositions = new ArrayList<>();
 
-        int equatorMinHeight = (int)(Math.floor(this.map.getHeight() * 0.4));
-        int equatorMaxHeight = equatorMinHeight + (int)(Math.floor(this.map.getWidth() * 0.2));
+        equatorMinHeight = (int)(Math.floor(this.map.getHeight() * 0.4));
+        equatorMaxHeight = equatorMinHeight + (int)(Math.floor(this.map.getWidth() * 0.2));
 
         for (Vector2d vector : allPossiblePositions) {
             if (vector.getY() >= equatorMinHeight && vector.getY() <= equatorMaxHeight) {
@@ -88,5 +90,9 @@ public class RandomPositionGenerator {
             }
         }
         return result;
+    }
+
+    public boolean isPositionInEquator(int y){
+        return y>=equatorMinHeight && y<=equatorMaxHeight;
     }
 }
