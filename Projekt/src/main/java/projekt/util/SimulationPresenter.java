@@ -96,6 +96,7 @@ public class SimulationPresenter {
 
         boolean specialMutationLogic = mutationVariantChoice.getValue().equals("slight correction");
 
+
         this.windows.add(new SimulationWindow(
                 new Simulation(
                         mapWidth, mapHeight, energyGainedOnConsumption, plantsPerDay, initialAnimalCount,

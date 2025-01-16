@@ -15,13 +15,15 @@ public class StepMutator extends AbstractGeneMutator{
         for (int i = 0; i < mutationsCount; i++) {
             int mutationIndex = random.nextInt(genome.size());
             int change = random.nextBoolean() ? -1 : 1;
-            genome.set(mutationIndex, genome.get(mutationIndex)+change);
+            int newGene = genome.get(mutationIndex)+change;
+            if(newGene<0){
+                newGene=7;
+            } else if (newGene>7){
+                newGene = 0;
+            }
+            genome.set(mutationIndex,  newGene);
         }
         return genome;
     }
 
-    @Override
-    public List<Integer> generateNewGenome(Animal a1, Animal a2) {
-        return null;
-    }
 }
