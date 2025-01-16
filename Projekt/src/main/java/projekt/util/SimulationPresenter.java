@@ -3,11 +3,14 @@ package projekt.util;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import projekt.model.SimulationWindow;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SimulationPresenter {
-    private Simulation simulation;
+    private List<SimulationWindow> windows = new ArrayList<>();
     // Map controls
     @FXML
     private TextField widthInput;
@@ -43,59 +46,64 @@ public class SimulationPresenter {
     @FXML
     private void createSimulation() {
         // Get map data from controls
-        int mapWidth = parseIntInput(widthInput);
+        int mapWidth = parseIntInput(widthInput, false);
         if (mapWidth < 0) {return;}
 
-        int mapHeight = parseIntInput(heightInput);
+        int mapHeight = parseIntInput(heightInput, false);
         if (mapHeight < 0) {return;}
 
         boolean specialMapLogic = mapVariantBox.getValue().equals("poles");
 
         // Get plants data from controls
-        int initialPlantsCount = parseIntInput(initPlantsCountInput);
+        int initialPlantsCount = parseIntInput(initPlantsCountInput, true);
         if (initialPlantsCount < 0) {return;}
 
-        int energyGainedOnConsumption = parseIntInput(energyOnConsumptionInput);
+        int energyGainedOnConsumption = parseIntInput(energyOnConsumptionInput, true);
         if (energyGainedOnConsumption < 0) {return;}
 
-        int plantsPerDay = parseIntInput(plantsPerDayInput);
+        int plantsPerDay = parseIntInput(plantsPerDayInput, true);
         if (plantsPerDay < 0) {return;}
 
         // Get animal data from controls
-        int initialAnimalCount = parseIntInput(initAnimalCountInput);
+        int initialAnimalCount = parseIntInput(initAnimalCountInput, true);
         if (initialAnimalCount < 0) {return;}
 
-        int initialAnimalEnergy = parseIntInput(initAnimalEnergyInput);
+        int initialAnimalEnergy = parseIntInput(initAnimalEnergyInput, true);
         if (initialAnimalEnergy < 0) {return;}
 
-        int energyForBreeding = parseIntInput(energyForBreedingInput);
+        int energyForBreeding = parseIntInput(energyForBreedingInput, true);
         if (energyForBreeding < 0) {return;}
 
-        int energyOnBreeding = parseIntInput(energyOnBreedingInput);
+        int energyOnBreeding = parseIntInput(energyOnBreedingInput, true);
         if (energyOnBreeding < 0) {return;}
 
-        int minMutation = parseIntInput(minMutationInput);
+        int minMutation = parseIntInput(minMutationInput, true);
         if (minMutation < 0) {return;}
 
-        int maxMutation = parseIntInput(maxMutationInput);
+        int maxMutation = parseIntInput(maxMutationInput, true);
         if (maxMutation < 0) {return;}
 
-        int geneLength = parseIntInput(geneLengthInput);
+        int geneLength = parseIntInput(geneLengthInput, false);
         if (geneLength < 0) {return;}
+
+        if (!(minMutation <= maxMutation && maxMutation <= geneLength)) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Genes error");
+            alert.setHeaderText("Condition 0 <= minMutationCount <= maxMutationCount <= geneLength is not met");
+            alert.showAndWait();
+            return;
+        }
 
         boolean specialMutationLogic = mutationVariantChoice.getValue().equals("slight correction");
 
-        this.simulation = new Simulation(mapWidth, mapHeight, energyGainedOnConsumption, plantsPerDay,
-                initialAnimalCount, geneLength, initialAnimalEnergy, energyForBreeding, energyOnBreeding, minMutation,
-                maxMutation, specialMutationLogic, specialMapLogic);
-        run();
+        this.windows.add(new SimulationWindow(
+                new Simulation(
+                        mapWidth, mapHeight, energyGainedOnConsumption, plantsPerDay, initialAnimalCount,
+                        geneLength, initialAnimalEnergy, energyForBreeding, energyOnBreeding, minMutation,
+                        maxMutation, specialMutationLogic, specialMapLogic)));
     }
 
-    private void run() {
-        new Thread(() -> this.simulation.run()).start();
-    }
-
-    private int parseIntInput(TextField input) {
+    private int parseIntInput(TextField input, boolean canBeZero) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Input error");
         int result;
@@ -103,14 +111,21 @@ public class SimulationPresenter {
         try {
             result = Integer.parseInt(input.getText());
         } catch (NumberFormatException e) {
-            alert.setHeaderText("Please, enter valid and positive integer number");
+            alert.setHeaderText("Please, enter valid integer number");
             alert.showAndWait();
             return -1;
         }
 
-        if (result <= 0) {
+        if (canBeZero && result < 0) {
+            alert.setHeaderText("Please, enter valid non-negative number");
+            alert.showAndWait();
+            return -1;
+        } else if (!canBeZero && result <= 0) {
+            alert.setHeaderText("Please, enter valid positive number");
+            alert.showAndWait();
             return -1;
         }
+
         return result;
     }
 }
