@@ -38,7 +38,7 @@ public class StatisticsManager {
         return null;
     }
 
-    private String popoularGenomes(Map<Vector2d, HashSet<Animal>> animalMap){
+    private List<List<Integer>> popoularGenomes(Map<Vector2d, HashSet<Animal>> animalMap){
         Map<List<Integer>,Integer> genomeRanking = new HashMap<>();
         for (Vector2d mapPosition : animalMap.keySet()) {
             HashSet<Animal> animals = animalMap.get(mapPosition);
@@ -55,9 +55,8 @@ public class StatisticsManager {
         return genomeRanking.entrySet().stream()
                 .sorted(Map.Entry.<List<Integer>,Integer>comparingByValue().reversed())
                 .limit(10)
-                .map(entry -> entry.getKey().toString()+' '+ entry.getValue() +"\n")
-                .reduce((a,b) -> a+b)
-                .orElse("");
+                .map(Map.Entry::getKey)
+                .toList();
     }
 
     private int getTotalEnergy(Map<Vector2d, HashSet<Animal>> animalMap){
@@ -86,7 +85,7 @@ public class StatisticsManager {
         int animalCount = map.getAnimalsCount();
         int plantCount = map.getPlantList().size();
         int freeSpacesCount = map.getHeight()*map.getWidth() - map.getAnimalMap().size();
-        String populargGenes = popoularGenomes(map.getAnimalMap());
+        List<List<Integer>> populargGenes = popoularGenomes(map.getAnimalMap());
         double averageEnergyLevel = (double) getTotalEnergy(map.getAnimalMap()) /animalCount;
         double averageChildCount = (double) getTotalChildren(map.getAnimalMap()) /animalCount;
 

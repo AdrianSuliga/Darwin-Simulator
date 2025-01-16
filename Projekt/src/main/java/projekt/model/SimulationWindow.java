@@ -16,6 +16,7 @@ import projekt.util.Simulation;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 public class SimulationWindow implements MapChangeListener {
     private final Stage stage;
@@ -114,7 +115,8 @@ public class SimulationWindow implements MapChangeListener {
 
         synchronized (map) {
             map.updateStatistics();
-            mapStats=map.getStatistics().toString();
+            statistics=map.getStatistics();
+            mapStats=statistics.toString();
             this.animalMap = new HashMap<>(map.getAnimalMap());
             this.plantList = new HashMap<>(map.getPlantList());
         }
@@ -200,10 +202,22 @@ public class SimulationWindow implements MapChangeListener {
                 } else {
                     label = new Label(" ");
                 }
-                label.setStyle("-fx-border-color: black; -fx-border-width: 1;");
-                if(this.simulation.isPositionInEquator(j) && !running){
-                    label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-background-color: green;");
+                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold;");
+                if(!running){
+                    if(this.simulation.isPositionInEquator(j)){
+                        label.setStyle(label.getStyle()+" -fx-background-color: green;");
+                    }
+                    if(this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty()){
+                        List<List<Integer>> genesInPosition = this.animalMap.get(pos).stream()
+                                .map(Animal::getGenes)
+                                .toList();
+                        if(genesInPosition.contains(statistics.popularGenes().getFirst())){
+                            label.setStyle(label.getStyle()+" -fx-text-fill: red;");
+                        }
+                    }
+
                 }
+
                 label.setAlignment(Pos.CENTER);
                 label.setPrefSize(cell_width, cell_height);
                 label.setOnMouseClicked(e->{
