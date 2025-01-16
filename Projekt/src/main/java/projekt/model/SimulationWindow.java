@@ -5,9 +5,11 @@ import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
@@ -20,6 +22,10 @@ import java.util.HashSet;
 
 public class SimulationWindow implements MapChangeListener {
     private final Stage stage;
+
+
+    private Label statLabel;
+
     private GridPane mainGrid;
     private final Simulation simulation;
     private Thread simulationThread;
@@ -33,6 +39,14 @@ public class SimulationWindow implements MapChangeListener {
 
     public SimulationWindow(Simulation simulation) {
         this.stage = new Stage();
+        statLabel = new Label("Statistics");
+
+        VBox statLayout = new VBox(10,statLabel);
+        BorderPane pane = new BorderPane();
+        statLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+        pane.setLeft(statLayout);
+        pane.setCenter(layout);
+        
         this.mainGrid = new GridPane();
         mainGrid.setGridLinesVisible(true);
         mainGrid.setAlignment(Pos.CENTER);
@@ -44,8 +58,10 @@ public class SimulationWindow implements MapChangeListener {
         this.cell_height = 500 / maxY;
         VBox layout = new VBox(10, mainGrid);
         layout.setStyle("-fx-alignment: center;");
+        pane.setLeft(statLayout);
+        pane.setCenter(layout);
 
-        Scene scene = new Scene(layout, 2 * maxX * cell_width, 2 * maxY * cell_height);
+        Scene scene = new Scene(pane, 2 * maxX * cell_width, 2 * maxY * cell_height);
         stage.setScene(scene);
         stage.setTitle("Simulation");
         stage.setOnCloseRequest(windowEvent -> stopSimulationInNewWindow());
@@ -68,11 +84,17 @@ public class SimulationWindow implements MapChangeListener {
 
     @Override
     public void mapChanged(WorldMap map) {
+        String mapSnapshot;
+        String mapStats;
         synchronized (map) {
+            map.updateStatistics();
+            mapStats=map.getStatistics().toString();
             this.animalMap = new HashMap<>(map.getAnimalMap());
             this.plantList = new HashMap<>(map.getPlantList());
         }
-        Platform.runLater(this::drawMap);
+        Platform.runLater(()->{
+          statLabel.setText(mapStats);
+          this.drawMap();});
     }
 
     private void drawMap() {

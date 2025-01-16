@@ -6,6 +6,7 @@ import projekt.interfaces.WorldElement;
 import projekt.util.AnimalComparator;
 import projekt.util.MapVisualizer;
 import projekt.util.RandomPositionGenerator;
+import projekt.util.StatisticsManager;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,6 +30,10 @@ public class WorldMap {
 
     private MapMovementLogicHandler mapLogic; // uzywamy, by określić zmiane pozycji i koszt energii
 
+    private StatisticsManager statManager;
+
+    private Statistics statistics;
+
     public WorldMap(Vector2d upperRight, Vector2d lowerLeft, Map<Vector2d, HashSet<Animal>> animalMap,
                     int defaultEnergyConsumption, int plantsPerDay, MapMovementLogicHandler movementLogicHandler) {
         this.boundary = new Boundary(upperRight, lowerLeft);
@@ -40,6 +45,7 @@ public class WorldMap {
         this.movementLogicHandler = movementLogicHandler;
         this.movementLogicHandler.setMap(this);
         this.comparator = new AnimalComparator();
+        this.statManager = new StatisticsManager();
     }
 
     public void registerObserver(MapChangeListener listener) {
@@ -153,6 +159,13 @@ public class WorldMap {
     }
 
     public int removeDeadAnimals() {
+        //update statystyk
+        for (Vector2d mapPosition : animalMap.keySet()) {
+            animalMap.get(mapPosition).stream()
+                    .filter(animal -> animal.getDeathDay() > -1)
+                    .forEach(animal -> statManager.updateAverageLifespan(animal));
+        }
+        //usuniecie
         for (Vector2d mapPosition : animalMap.keySet()) {
             animalMap.get(mapPosition).removeIf(animal -> animal.getDeathDay() > -1);
         }
@@ -161,10 +174,22 @@ public class WorldMap {
         return getAnimalsCount();
     }
 
-    private int getAnimalsCount() {
+    public int getAnimalsCount() {
         return animalMap.values().stream()
                 .mapToInt(HashSet::size)
                 .sum();
+    }
+
+    public Statistics getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(Statistics statistics) {
+        this.statistics = statistics;
+    }
+
+    public void updateStatistics(){
+        this.statManager.updateStatistics(this);
     }
 
     @Override
