@@ -5,34 +5,26 @@ import projekt.model.*;
 import java.util.*;
 
 public class Simulation {
-    private WorldMap worldMap;
     private int animalsCount;
-    private final boolean specialMapLogic;
     private final int energyGainedOnConsumption;
     private final int animalsStartingEnergy;
     private final int energyForBreeding;
     private final int energyConsumedOnBreeding;
-    private final int minMutationCount;
-    private final int maxMutationCount;
-    private final boolean specialMutationLogic; // false - [1], true - [2]
     private final int animalsGeneLength;
 
-    private AbstractGeneMutator geneMutator;
+    private final WorldMap worldMap;
+    private final AbstractGeneMutator geneMutator;
     private final AnimalComparator comparator;
 
     public Simulation(int mapWidth, int mapHeight, int energyGainedOnConsumption,
                       int plantsPerDay, int animalsCount, int animalsGeneLength, int animalsStartingEnergy,
                       int energyForBreeding, int energyConsumedOnBreeding, int minMutationCount,
                       int maxMutationCount, boolean specialMutationLogic, boolean specialMapLogic) {
-        this.specialMapLogic = specialMapLogic;
         this.energyGainedOnConsumption = energyGainedOnConsumption;
         this.animalsCount = animalsCount;
         this.animalsStartingEnergy = animalsStartingEnergy;
         this.energyForBreeding = energyForBreeding;
         this.energyConsumedOnBreeding = energyConsumedOnBreeding;
-        this.minMutationCount = minMutationCount;
-        this.maxMutationCount = maxMutationCount;
-        this.specialMutationLogic = specialMutationLogic;
         this.animalsGeneLength = animalsGeneLength;
         this.comparator = new AnimalComparator();
 
@@ -50,6 +42,12 @@ public class Simulation {
             movementLogicHandler = new PolarLogic();
         } else {
             movementLogicHandler = new GlobeLogic();
+        }
+
+        if (specialMutationLogic) {
+            this.geneMutator = new StepMutator(minMutationCount, maxMutationCount);
+        } else {
+            this.geneMutator = new RandomMutator(minMutationCount, maxMutationCount);
         }
 
         this.worldMap = new WorldMap(new Vector2d(mapWidth - 1, mapHeight - 1),

@@ -125,8 +125,8 @@ public class WorldMap {
         }
 
         public void consumePlants(int energyPerPlant){
-            for(Vector2d mapPosition: animalMap.keySet()){
-                if(plantList.containsKey(mapPosition)){
+            for(Vector2d mapPosition: animalMap.keySet()) {
+                if (plantList.containsKey(mapPosition) && !animalMap.get(mapPosition).isEmpty()) {
                     Animal winningAnimal = comparator.compare(animalMap.get(mapPosition));
                     winningAnimal.eat(energyPerPlant);
                     plantList.remove(mapPosition);
