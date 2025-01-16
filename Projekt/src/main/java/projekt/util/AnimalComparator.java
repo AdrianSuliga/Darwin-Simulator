@@ -7,19 +7,25 @@ import java.util.*;
 public class AnimalComparator  {
 
     public Animal compare(HashSet<Animal> animals) {
-        Optional<Animal> maxEnergyAnimal = animals.stream().max(Comparator.comparing(Animal::getEnergy));
+        Optional<Animal> maxEnergyAnimal = new HashSet<>(animals)
+                .stream()
+                .max(Comparator.comparing(Animal::getEnergy));
 
         if (maxEnergyAnimal.isPresent()) {
             return maxEnergyAnimal.get();
         }
 
-        Optional<Animal> maxAgeAnimal = animals.stream().max(Comparator.comparing(Animal::getDaysLived));
+        Optional<Animal> maxAgeAnimal = new HashSet<>(animals)
+                .stream()
+                .max(Comparator.comparing(Animal::getDaysLived));
 
         if (maxAgeAnimal.isPresent()) {
             return maxAgeAnimal.get();
         }
 
-        Optional<Animal> maxChildrenAnimal = animals.stream().max(Comparator.comparing(Animal::getChildrenMade));
+        Optional<Animal> maxChildrenAnimal = new HashSet<>(animals)
+                .stream()
+                .max(Comparator.comparing(Animal::getChildrenMade));
 
         if (maxChildrenAnimal.isPresent()) {
             return maxChildrenAnimal.get();

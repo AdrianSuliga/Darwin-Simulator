@@ -18,6 +18,7 @@ public class Simulation {
     private final int animalsGeneLength;
 
     private AbstractGeneMutator geneMutator;
+    private final AnimalComparator comparator;
 
     public Simulation(int mapWidth, int mapHeight, int energyGainedOnConsumption,
                       int plantsPerDay, int animalsCount, int animalsGeneLength, int animalsStartingEnergy,
@@ -33,6 +34,7 @@ public class Simulation {
         this.maxMutationCount = maxMutationCount;
         this.specialMutationLogic = specialMutationLogic;
         this.animalsGeneLength = animalsGeneLength;
+        this.comparator = new AnimalComparator();
 
         Map<Vector2d, HashSet<Animal>> animalMap = new HashMap<>();
         for (int i = 0; i < this.animalsCount; i++) {
@@ -86,16 +88,20 @@ public class Simulation {
 
     private void breedAnimals() {
         for (Vector2d position: this.worldMap.getAnimalMap().keySet()) {
-            List<Animal> animals = this.worldMap.getBreedingAnimalsList(this.worldMap.getAnimalMap().get(position), energyForBreeding);
+            HashSet<Animal> animals = this.worldMap.getBreedingAnimalsSet(this.worldMap.getAnimalMap().get(position), energyForBreeding);
+
             if (animals.size() < 2) {
                 continue;
             }
 
-            List<Integer> newGenes = geneMutator.generateNewGenome(animals.get(0),animals.get(1));
+            Animal alpha = this.comparator.compare(animals);
+            animals.remove(alpha); // Removing from copy of a set so it is fine
+            Animal beta = this.comparator.compare(animals);
 
-            animals.get(0).breed(this.energyConsumedOnBreeding);
-            animals.get(1).breed(this.energyConsumedOnBreeding);
+            List<Integer> newGenes = geneMutator.generateNewGenome(alpha, beta);
 
+            alpha.breed(this.energyConsumedOnBreeding);
+            beta.breed(this.energyConsumedOnBreeding);
 
             Animal newBorn = new Animal(position, 2 * this.energyForBreeding, newGenes);
             this.worldMap.getAnimalMap().get(position).add(newBorn);

@@ -7,6 +7,7 @@ import projekt.util.MapVisualizer;
 import projekt.util.RandomPositionGenerator;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class WorldMap {
     private Map<Vector2d, HashSet<Animal>> animalMap = new HashMap<>();
@@ -115,12 +116,12 @@ public class WorldMap {
             updateAnimals();
         }
 
-        public List<Animal> getBreedingAnimalsList(HashSet<Animal> animals, int requiredEnergy) {
+        public HashSet<Animal> getBreedingAnimalsSet(HashSet<Animal> animals, int requiredEnergy) {
             return animals
                     .stream()
                     .filter(animal -> animal.getEnergy() >= requiredEnergy)
                     .filter(animal -> animal.getDeathDay() == -1)
-                    .toList();
+                    .collect(Collectors.toCollection(HashSet::new));
         }
 
         public void consumePlants(int energyPerPlant){
