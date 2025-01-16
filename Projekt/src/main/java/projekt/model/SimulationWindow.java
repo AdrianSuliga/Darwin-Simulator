@@ -44,8 +44,6 @@ public class SimulationWindow implements MapChangeListener {
         VBox statLayout = new VBox(10,statLabel);
         BorderPane pane = new BorderPane();
         statLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
-        pane.setLeft(statLayout);
-        pane.setCenter(layout);
         
         this.mainGrid = new GridPane();
         mainGrid.setGridLinesVisible(true);
