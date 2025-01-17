@@ -20,6 +20,9 @@ import java.util.List;
 
 public class SimulationWindow implements MapChangeListener {
     private final Stage stage;
+    private final VBox statLayout;
+
+    private final HBox trackedAnimalStatsLayout;
 
 
     private Label statLabel;
@@ -43,6 +46,8 @@ public class SimulationWindow implements MapChangeListener {
 
     private Statistics statistics;
 
+    private Animal trackedAnimal;
+
     public SimulationWindow(Simulation simulation) {
         this.stage = new Stage();
 
@@ -55,7 +60,6 @@ public class SimulationWindow implements MapChangeListener {
         continueButton.setOnAction(e -> {
             synchronized (this){
                 running=true;
-                Platform.runLater(()->{animalStatLabel.setText("");});
                 notifyAll();
             }
 
@@ -67,7 +71,8 @@ public class SimulationWindow implements MapChangeListener {
         //staty
         statLabel = new Label("Statistics");
         animalStatLabel = new Label();
-        VBox statLayout = new VBox(10,statLabel,animalStatLabel);
+        trackedAnimalStatsLayout = new HBox(10,animalStatLabel);
+        statLayout = new VBox(10,statLabel,trackedAnimalStatsLayout);
         statLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
         //mapa
@@ -128,6 +133,7 @@ public class SimulationWindow implements MapChangeListener {
             Platform.runLater(() -> {
             statLabel.setText(mapStats);
             this.drawMap();
+            this.drawTrackedAnimal();
             });
 
             synchronized (this) {
@@ -141,6 +147,13 @@ public class SimulationWindow implements MapChangeListener {
             Thread.currentThread().interrupt(); // Restore interrupted status
             System.out.println("Thread interrupted!");
         }
+    }
+
+    private void drawTrackedAnimal(){
+        if(trackedAnimal!=null){
+            this.animalStatLabel.setText(trackedAnimal.getStatistics());
+        }
+
     }
 
 
@@ -202,6 +215,12 @@ public class SimulationWindow implements MapChangeListener {
                 } else {
                     label = new Label(" ");
                 }
+
+                if(trackedAnimal!=null){
+                    if(pos.equals(trackedAnimal.getPosition())){
+                        label.setText("#");
+                    }
+                }
                 label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold;");
                 if(!running){
                     if(this.simulation.isPositionInEquator(j)){
@@ -218,12 +237,30 @@ public class SimulationWindow implements MapChangeListener {
 
                 }
 
+
                 label.setAlignment(Pos.CENTER);
                 label.setPrefSize(cell_width, cell_height);
                 label.setOnMouseClicked(e->{
-                    if(this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty() && !running){
-                        String animalStats = this.simulation.getStrongest(this.animalMap.get(pos)).getStatistics();
-                        Platform.runLater(()->{animalStatLabel.setText(animalStats);});
+                    if(this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty() && !running && trackedAnimal==null){
+                        Animal animal = this.simulation.getStrongest(this.animalMap.get(pos));
+                        Button startTracking = new Button("sledz");
+                        Button stopTracking = new Button("odsledz");
+                        startTracking.setOnAction(event -> {
+                            trackedAnimal = animal;
+                            trackedAnimalStatsLayout.getChildren().clear();
+                            trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
+                            trackedAnimalStatsLayout.getChildren().add(stopTracking);
+                            drawTrackedAnimal();
+                        });
+                        stopTracking.setOnAction(event -> {
+                            trackedAnimal = null;
+                            trackedAnimalStatsLayout.getChildren().clear();
+                        });
+                        trackedAnimalStatsLayout.getChildren().clear();
+                        trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
+                        trackedAnimalStatsLayout.getChildren().add(startTracking);
+
+                        Platform.runLater(()->{animalStatLabel.setText(animal.getStatistics());});
                     }
                 });
                 mainGrid.add(label, i + 1, maxY - j + 1);
