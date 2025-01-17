@@ -109,20 +109,25 @@ public class WorldMap {
         } else return plantList.getOrDefault(position, null);
     }
 
+    public void placeAnimal(Animal animal){
+        if (animalMap.get(animal.getPosition()) == null) {//jeśli set nie istnieje
+            HashSet<Animal> newSet = new HashSet<>();
+            newSet.add(animal);
+            animalMap.put(animal.getPosition(), newSet);
+        } else {
+            animalMap.get(animal.getPosition()).add(animal);
+        }
+        //mapChanged();
+    }
     public void updateAnimals() {
         //pobieramy po kolei zmiany z bufora,
         for (Pair<Vector2d, Animal> pair : animalChangeBuffer) {
             animalMap.get(pair.getKey()).remove(pair.getValue());
-            if (animalMap.get(pair.getValue().getPosition()) == null) {//jeśli set nie istnieje
-                HashSet<Animal> newSet = new HashSet<>();
-                newSet.add(pair.getValue());
-                animalMap.put(pair.getValue().getPosition(), newSet);
-            } else {
-                animalMap.get(pair.getValue().getPosition()).add(pair.getValue());
-            }
+            placeAnimal(pair.getValue());
 
         }
         animalChangeBuffer.clear();
+//        mapChanged();
     }
 
     public void moveAnimals() {
@@ -181,6 +186,7 @@ public class WorldMap {
     }
 
     public Statistics getStatistics() {
+        this.updateStatistics();
         return statistics;
     }
 
