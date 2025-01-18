@@ -19,6 +19,9 @@ public abstract class AbstractGeneMutator {
         Random random = new Random();
         int totalEnergy = alpha.getEnergy() + beta.getEnergy();
         int geneLenght = alpha.getGenes().size();
+        if(geneLenght == 1){
+            return new ArrayList<>(alpha.getGenes());
+        }
         List<Integer> resultGenome = new ArrayList<>();
         //co najmniej 1 gen od słabszego (bety)
         int betaGeneConut = ((beta.getEnergy()*geneLenght)/totalEnergy) < 1.0 ? 1 : (int) Math.floor((beta.getEnergy()*geneLenght)/totalEnergy) ;
