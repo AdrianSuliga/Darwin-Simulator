@@ -115,6 +115,7 @@ public class Animal implements WorldElement {
 
     public String getStatistics(){
         return "kierunek: "+direction+ '\n'
+                +"pozycja: "+position+ '\n'
                 +"genom: "+genes+ '\n'
                 +"aktywny: "+genes.get(activeGeneIdx)+ '\n'
                 +"energia: "+energy+ '\n'

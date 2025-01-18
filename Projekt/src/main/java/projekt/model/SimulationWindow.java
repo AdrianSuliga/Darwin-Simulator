@@ -67,6 +67,9 @@ public class SimulationWindow implements MapChangeListener {
 
         continueButton.setOnAction(e -> {
             synchronized (this){
+                if(trackedAnimal == null){
+                    hideTrackedAnimalStats();
+                }
                 running=true;
                 notifyAll();
             }
@@ -181,16 +184,21 @@ public class SimulationWindow implements MapChangeListener {
         this.topGenomesLabel.setText(popularGenomes);
     }
     private void drawTrackedAnimal(){
-        if(trackedAnimal!=null){
+        if(trackedAnimal!=null) {
             this.animalStatLabel.setText(trackedAnimal.getStatistics());
             //trackedAnimalStatsLayout.setStyle("-fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
-        } else {
-            //trackedAnimalStatsLayout.setStyle("");
-
         }
-
     }
 
+    public void  showTrackedAnimalStats(){
+            trackedAnimalStatsLayout.setStyle("-fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
+    }
+
+    public void hideTrackedAnimalStats(){
+        animalStatLabel.setText("");
+        trackedAnimalStatsLayout.setStyle("");
+        trackedAnimalStatsLayout.getChildren().clear();
+    }
 
     private void drawMap() {
         clearGrid();
@@ -280,16 +288,19 @@ public class SimulationWindow implements MapChangeListener {
                         Animal animal = this.simulation.getStrongest(this.animalMap.get(pos));
                         Button startTracking = new Button("sledz");
                         Button stopTracking = new Button("odsledz");
+                        showTrackedAnimalStats();
                         startTracking.setOnAction(event -> {
                             trackedAnimal = animal;
-                            trackedAnimalStatsLayout.getChildren().clear();
-                            trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
+//                            trackedAnimalStatsLayout.getChildren().clear();
+//                            trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
+                            trackedAnimalStatsLayout.getChildren().remove(startTracking);
                             trackedAnimalStatsLayout.getChildren().add(stopTracking);
                             drawTrackedAnimal();
                         });
                         stopTracking.setOnAction(event -> {
                             trackedAnimal = null;
                             trackedAnimalStatsLayout.getChildren().clear();
+                            hideTrackedAnimalStats();
                         });
                         trackedAnimalStatsLayout.getChildren().clear();
                         trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
