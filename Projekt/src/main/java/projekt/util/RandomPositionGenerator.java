@@ -23,8 +23,7 @@ public class RandomPositionGenerator {
         List<Vector2d> nonEquatorPositions = new ArrayList<>();
 
         equatorMinHeight = (int)(Math.floor(this.map.getHeight() * 0.4));
-        equatorMaxHeight = equatorMinHeight + (int)(Math.floor(this.map.getWidth() * 0.2));
-
+        equatorMaxHeight = this.map.getHeight()-equatorMinHeight-1;
         for (Vector2d vector : allPossiblePositions) {
             if (vector.getY() >= equatorMinHeight && vector.getY() <= equatorMaxHeight) {
                 equatorPositions.add(vector);
