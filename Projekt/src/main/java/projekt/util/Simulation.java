@@ -67,7 +67,6 @@ public class Simulation {
             consumePlants();
             breedAnimals();
             this.worldMap.spawnPlants();
-            this.worldMap.updateStatistics();
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -78,14 +77,17 @@ public class Simulation {
 
     private void removeDeadAnimals() {
         this.animalsCount = this.worldMap.removeDeadAnimals();
+        this.worldMap.mapChanged();
     }
 
     private void moveAnimals() {
         this.worldMap.moveAnimals();
+        this.worldMap.mapChanged();
     }
 
     private void consumePlants() {
         this.worldMap.consumePlants(this.energyGainedOnConsumption);
+        this.worldMap.mapChanged();
     }
 
     public Animal getStrongest(HashSet<Animal> animals){
@@ -110,8 +112,14 @@ public class Simulation {
             beta.breed(this.energyConsumedOnBreeding);
 
             Animal newBorn = new Animal(position, 2 * this.energyForBreeding, newGenes);
-            this.worldMap.getAnimalMap().get(position).add(newBorn);
+            this.worldMap.placeAnimal(newBorn);
         }
+        this.worldMap.mapChanged();
+    }
+
+    public void spawnPalnts(){
+        this.worldMap.spawnPlants();
+        this.worldMap.mapChanged();
     }
 
     private Animal getRandomAnimal(int maxX, int maxY) {

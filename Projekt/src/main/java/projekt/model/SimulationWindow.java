@@ -221,7 +221,7 @@ public class SimulationWindow implements MapChangeListener {
                         label.setText("#");
                     }
                 }
-                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold;");
+                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold; -fx-font-size: 24px;");
                 if(!running){
                     if(this.simulation.isPositionInEquator(j)){
                         label.setStyle(label.getStyle()+" -fx-background-color: green;");
