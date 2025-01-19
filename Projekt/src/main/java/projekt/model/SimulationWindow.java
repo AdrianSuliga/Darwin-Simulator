@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.*;
 
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.control.Label;
 import projekt.interfaces.MapChangeListener;
@@ -67,12 +68,12 @@ public class SimulationWindow implements MapChangeListener {
                 if (trackedAnimal == null) {
                     hideTrackedAnimalStats();
                 }
-                running=true;
+                running = true;
                 notifyAll();
             }
         });
 
-        HBox buttons = new HBox(stopButton,continueButton);
+        HBox buttons = new HBox(stopButton, continueButton);
         buttons.setStyle("-fx-maxheigth: 50px; -fx-alignment: center;");
 
         //staty
@@ -84,14 +85,14 @@ public class SimulationWindow implements MapChangeListener {
         averageEnergyLabel = new Label("Srednia energia");
         averageLifespanLabel = new Label("Sredni zywot");
         averageChildCountLabel = new Label("Srednia dzietnosc");
-        mapStatsLayout = new VBox(10,statLabel,animalCountLabel,
-                plantCountLabel,freeSpaceLabel,topGenomesLabel,
-                averageEnergyLabel,averageLifespanLabel,averageChildCountLabel);
+        mapStatsLayout = new VBox(10, statLabel, animalCountLabel,
+                plantCountLabel, freeSpaceLabel, topGenomesLabel,
+                averageEnergyLabel, averageLifespanLabel, averageChildCountLabel);
         mapStatsLayout.setStyle(" -fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
 
         animalStatLabel = new Label();
-        trackedAnimalStatsLayout = new HBox(10,animalStatLabel);
-        statLayout = new VBox(10,buttons,mapStatsLayout,trackedAnimalStatsLayout);
+        trackedAnimalStatsLayout = new HBox(10, animalStatLabel);
+        statLayout = new VBox(10, buttons, mapStatsLayout, trackedAnimalStatsLayout);
         statLayout.setStyle("-fx-padding: 20; -fx-alignment: center; ");
 
         //mapa
@@ -102,7 +103,7 @@ public class SimulationWindow implements MapChangeListener {
         this.simulation.getWorldMap().registerObserver(this);
         this.maxX = simulation.getWorldMap().getWidth() - 1;
         this.maxY = simulation.getWorldMap().getHeight() - 1;
-        this.cell_width = (int) Math.floor(500.0 / ((Math.max(this.maxX,this.maxY)+1)));
+        this.cell_width = (int) Math.floor(500.0 / ((Math.max(this.maxX, this.maxY) + 1)));
         this.cell_height = this.cell_width;
         VBox layout = new VBox(10, mainGrid);
         layout.setStyle("-fx-alignment: center;");
@@ -112,7 +113,7 @@ public class SimulationWindow implements MapChangeListener {
         pane.setLeft(statLayout);
         pane.setCenter(layout);
 
-        Scene scene = new Scene(pane, (2 * maxX * cell_width)+200, (2 * maxY * cell_height)+200);
+        Scene scene = new Scene(pane, (2 * maxX * cell_width) + 200, (2 * maxY * cell_height) + 200);
         stage.setScene(scene);
         stage.setTitle("Simulation");
         stage.setOnCloseRequest(windowEvent -> stopSimulationInNewWindow());
@@ -127,7 +128,8 @@ public class SimulationWindow implements MapChangeListener {
 
     private void stopSimulationInNewWindow() {
         if (simulationThread != null) {
-            this.simulation.getWorldMap().unregisterObserver(this);;
+            this.simulation.getWorldMap().unregisterObserver(this);
+            ;
             simulationThread.interrupt();
             this.simulationThread = null;
         }
@@ -164,21 +166,22 @@ public class SimulationWindow implements MapChangeListener {
         }
     }
 
-    private void drawStatistics(){
+    private void drawStatistics() {
         this.animalCountLabel.setText("Ilosc zwierzat: " + statistics.animalCount());
         this.plantCountLabel.setText("Ilosc roslin: " + statistics.plantCount());
         this.freeSpaceLabel.setText("Ilosc wolnych pol: " + statistics.freeSpacesCount());
-        this.averageEnergyLabel.setText("Srednia energia: " + (double)Math.round(statistics.averageEnergy() * 100) / 100);
-        this.averageLifespanLabel.setText("Sredni zywot: " + (double)Math.round(statistics.averageLifespan() * 100) / 100);
-        this.averageChildCountLabel.setText("Srednia dzietnosc: " + (double)Math.round(statistics.averageChildCount() * 100) / 100);
+        this.averageEnergyLabel.setText("Srednia energia: " + (double) Math.round(statistics.averageEnergy() * 100) / 100);
+        this.averageLifespanLabel.setText("Sredni zywot: " + (double) Math.round(statistics.averageLifespan() * 100) / 100);
+        this.averageChildCountLabel.setText("Srednia dzietnosc: " + (double) Math.round(statistics.averageChildCount() * 100) / 100);
         String popularGenomes = "Topowe genomy\n";
         for (int i = 0; i < statistics.popularGenes().size(); i++) {
             popularGenomes = popularGenomes + (i + 1) + ". " + statistics.popularGenes().get(i) + '\n';
         }
         this.topGenomesLabel.setText(popularGenomes);
     }
+
     private void drawTrackedAnimal() {
-        if(trackedAnimal!=null) {
+        if (trackedAnimal != null) {
             this.animalStatLabel.setText(trackedAnimal.getStatistics());
             //trackedAnimalStatsLayout.setStyle("-fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
         }
@@ -240,35 +243,53 @@ public class SimulationWindow implements MapChangeListener {
         }
     }
 
+    private Color getAnimalColor(Animal animal) {
+        if (animal.getEnergy() >= statistics.averageEnergy()) {
+            return Color.rgb(0,255,0);
+        } else if (animal.getEnergy() <= 0) {
+            return Color.BLACK;
+        } else {
+            int green = (int) Math.round(255.0*animal.getEnergy()/statistics.averageEnergy());
+            int blue = 255 - green;
+            return Color.rgb(0,green,blue);
+        }
+
+    }
+
     private void addMapElements() {
         for (int i = 0; i <= maxX; i++) {
             for (int j = maxY; j >= 0; j--) {
                 Vector2d pos = new Vector2d(i, j);
-                Label label;
-                if (this.animalMap.containsKey(pos) && this.animalMap.get(pos)!=null  && !this.animalMap.get(pos).isEmpty()) {
-                    label = new Label("X");
+                Label label = new Label();
+                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold; -fx-font-size: 24px;");
+                if (this.animalMap.containsKey(pos) && this.animalMap.get(pos) != null && !this.animalMap.get(pos).isEmpty()) {
+                    Animal animal = this.simulation.getStrongest(this.animalMap.get(pos));
+                    label.setText("X");
+                    label.setTextFill(getAnimalColor(animal));
                 } else if (this.plantList.containsKey(pos)) {
-                    label = new Label(this.plantList.get(pos).toString());
+                    label.setText(this.plantList.get(pos).toString());
                 } else {
-                    label = new Label(" ");
+                    label.setText(" ");
                 }
-
-                if(trackedAnimal!=null) {
+                if (trackedAnimal != null) {
                     if (pos.equals(trackedAnimal.getPosition())) {
-                        label.setText("#");
+                        label.setText(trackedAnimal.getDirection().toString());
+                        Background background = new Background(new BackgroundFill(Color.LIGHTGRAY,null,null));
+                        label.setTextFill(getAnimalColor(trackedAnimal));
+                        label.setBackground(background);
                     }
                 }
-                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold; -fx-font-size: 24px;");
+
                 if (!running) {
                     if (this.simulation.isPositionInEquator(j)) {
-                        label.setStyle(label.getStyle()+" -fx-background-color: green;");
+                        label.setStyle(label.getStyle() + " -fx-background-color: green;");
                     }
                     if (this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty()) {
                         List<List<Integer>> genesInPosition = this.animalMap.get(pos).stream()
                                 .map(Animal::getGenes)
                                 .toList();
                         if (genesInPosition.contains(statistics.popularGenes().getFirst())) {
-                            label.setStyle(label.getStyle()+" -fx-text-fill: red;");
+                            label.setStyle(label.getStyle() + " -fx-text-fill: red;");
                         }
                     }
                 }
@@ -299,7 +320,9 @@ public class SimulationWindow implements MapChangeListener {
                         trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
                         trackedAnimalStatsLayout.getChildren().add(startTracking);
 
-                        Platform.runLater(()->{animalStatLabel.setText(animal.getStatistics());});
+                        Platform.runLater(() -> {
+                            animalStatLabel.setText(animal.getStatistics());
+                        });
                     }
                 });
                 mainGrid.add(label, i + 1, maxY - j + 1);

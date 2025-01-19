@@ -25,3 +25,4 @@ out/
 .idea/shelf/
 .idea/workspace.xml
 /src/main/java/projekt/SmallTester.java
+/src/main/output/output.csv
