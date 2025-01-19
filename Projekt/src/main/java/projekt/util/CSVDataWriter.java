@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 public class CSVDataWriter {
     private final String filename;
 
     public CSVDataWriter() {
-        this.filename = "src/main/output/output.csv";
+        this.filename = "src/main/output/output-" + UUID.randomUUID() + ".csv";
         try (FileWriter writer = new FileWriter(this.filename, false)) {
             writeLine(writer, getHeaders());
         } catch (IOException e) {
