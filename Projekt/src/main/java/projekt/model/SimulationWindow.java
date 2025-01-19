@@ -261,7 +261,7 @@ public class SimulationWindow implements MapChangeListener {
             for (int j = maxY; j >= 0; j--) {
                 Vector2d pos = new Vector2d(i, j);
                 Label label = new Label();
-                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold; -fx-font-size: 24px;");
+                label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold; -fx-font-size:"+(cell_height/2)+"px; -fx-text-overrun: clip;");
                 if (this.animalMap.containsKey(pos) && this.animalMap.get(pos) != null && !this.animalMap.get(pos).isEmpty()) {
                     Animal animal = this.simulation.getStrongest(this.animalMap.get(pos));
                     label.setText("X");
