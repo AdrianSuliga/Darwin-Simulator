@@ -32,7 +32,6 @@ public class SimulationWindow implements MapChangeListener {
     private final Label averageLifespanLabel;
     private final Label averageChildCountLabel;
 
-
     private Label statLabel;
 
     private Label animalStatLabel;
@@ -48,9 +47,7 @@ public class SimulationWindow implements MapChangeListener {
     private HashMap<Vector2d, HashSet<Animal>> animalMap;
     private HashMap<Vector2d, Plant> plantList;
 
-    private boolean running=true;
-
-    private String mapStats;
+    private boolean running = true;
 
     private Statistics statistics;
 
@@ -66,16 +63,14 @@ public class SimulationWindow implements MapChangeListener {
         stopButton.setOnAction(e -> running = false);
 
         continueButton.setOnAction(e -> {
-            synchronized (this){
-                if(trackedAnimal == null){
+            synchronized (this) {
+                if (trackedAnimal == null) {
                     hideTrackedAnimalStats();
                 }
                 running=true;
                 notifyAll();
             }
-
         });
-
 
         HBox buttons = new HBox(stopButton,continueButton);
         buttons.setStyle("-fx-maxheigth: 50px; -fx-alignment: center;");
@@ -100,7 +95,6 @@ public class SimulationWindow implements MapChangeListener {
         statLayout.setStyle("-fx-padding: 20; -fx-alignment: center; ");
 
         //mapa
-
         this.mainGrid = new GridPane();
         mainGrid.setGridLinesVisible(true);
         mainGrid.setAlignment(Pos.CENTER);
@@ -112,6 +106,7 @@ public class SimulationWindow implements MapChangeListener {
         this.cell_height = this.cell_width;
         VBox layout = new VBox(10, mainGrid);
         layout.setStyle("-fx-alignment: center;");
+
         //zawiera wszystko
         BorderPane pane = new BorderPane();
         pane.setLeft(statLayout);
@@ -140,9 +135,8 @@ public class SimulationWindow implements MapChangeListener {
 
     @Override
     public void mapChanged(WorldMap map) {
-
         synchronized (map) {
-            statistics=map.getStatistics();
+            statistics = map.getStatistics();
             this.animalMap = new HashMap<>(map.getAnimalMap());
             this.plantList = new HashMap<>(map.getPlantList());
         }
@@ -171,30 +165,30 @@ public class SimulationWindow implements MapChangeListener {
     }
 
     private void drawStatistics(){
-        this.animalCountLabel.setText("Ilosc zwierzat: "+statistics.animalCount());
-        this.plantCountLabel.setText("Ilosc roslin: "+statistics.plantCount());
-        this.freeSpaceLabel.setText("Ilosc wolnych pol: "+statistics.freeSpacesCount());
-        this.averageEnergyLabel.setText("Srednia energia: "+(double) Math.round(statistics.averageEnergy()*100)/100);
-        this.averageLifespanLabel.setText("Sredni zywot: "+(double) Math.round(statistics.averageLifespan()*100)/100);
-        this.averageChildCountLabel.setText("Srednia dzietnosc: "+(double) Math.round(statistics.averageChildCount()*100)/100);
+        this.animalCountLabel.setText("Ilosc zwierzat: " + statistics.animalCount());
+        this.plantCountLabel.setText("Ilosc roslin: " + statistics.plantCount());
+        this.freeSpaceLabel.setText("Ilosc wolnych pol: " + statistics.freeSpacesCount());
+        this.averageEnergyLabel.setText("Srednia energia: " + (double)Math.round(statistics.averageEnergy() * 100) / 100);
+        this.averageLifespanLabel.setText("Sredni zywot: " + (double)Math.round(statistics.averageLifespan() * 100) / 100);
+        this.averageChildCountLabel.setText("Srednia dzietnosc: " + (double)Math.round(statistics.averageChildCount() * 100) / 100);
         String popularGenomes = "Topowe genomy\n";
-        for(int i=0;i<statistics.popularGenes().size();i++){
-            popularGenomes = popularGenomes + (i+1) +". "+ statistics.popularGenes().get(i)+'\n';
+        for (int i = 0; i < statistics.popularGenes().size(); i++) {
+            popularGenomes = popularGenomes + (i + 1) + ". " + statistics.popularGenes().get(i) + '\n';
         }
         this.topGenomesLabel.setText(popularGenomes);
     }
-    private void drawTrackedAnimal(){
+    private void drawTrackedAnimal() {
         if(trackedAnimal!=null) {
             this.animalStatLabel.setText(trackedAnimal.getStatistics());
             //trackedAnimalStatsLayout.setStyle("-fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
         }
     }
 
-    public void  showTrackedAnimalStats(){
-            trackedAnimalStatsLayout.setStyle("-fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
+    public void showTrackedAnimalStats() {
+        trackedAnimalStatsLayout.setStyle("-fx-padding: 10;-fx-border-color: black; -fx-border-width: 3px; -fx-border-radius: 10px; -fx-margin: 10px");
     }
 
-    public void hideTrackedAnimalStats(){
+    public void hideTrackedAnimalStats() {
         animalStatLabel.setText("");
         trackedAnimalStatsLayout.setStyle("");
         trackedAnimalStatsLayout.getChildren().clear();
@@ -259,40 +253,39 @@ public class SimulationWindow implements MapChangeListener {
                     label = new Label(" ");
                 }
 
-                if(trackedAnimal!=null){
-                    if(pos.equals(trackedAnimal.getPosition())){
+                if(trackedAnimal!=null) {
+                    if (pos.equals(trackedAnimal.getPosition())) {
                         label.setText("#");
                     }
                 }
                 label.setStyle("-fx-border-color: black; -fx-border-width: 1; -fx-font-weight: bold; -fx-font-size: 24px;");
-                if(!running){
-                    if(this.simulation.isPositionInEquator(j)){
+                if (!running) {
+                    if (this.simulation.isPositionInEquator(j)) {
                         label.setStyle(label.getStyle()+" -fx-background-color: green;");
                     }
-                    if(this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty()){
+                    if (this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty()) {
                         List<List<Integer>> genesInPosition = this.animalMap.get(pos).stream()
                                 .map(Animal::getGenes)
                                 .toList();
-                        if(genesInPosition.contains(statistics.popularGenes().getFirst())){
+                        if (genesInPosition.contains(statistics.popularGenes().getFirst())) {
                             label.setStyle(label.getStyle()+" -fx-text-fill: red;");
                         }
                     }
-
                 }
 
 
                 label.setAlignment(Pos.CENTER);
                 label.setPrefSize(cell_width, cell_height);
-                label.setOnMouseClicked(e->{
-                    if(this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty() && !running && trackedAnimal==null){
+                label.setOnMouseClicked(e -> {
+                    if (this.animalMap.containsKey(pos) && !this.animalMap.get(pos).isEmpty() && !running && trackedAnimal == null) {
                         Animal animal = this.simulation.getStrongest(this.animalMap.get(pos));
                         Button startTracking = new Button("sledz");
                         Button stopTracking = new Button("odsledz");
                         showTrackedAnimalStats();
                         startTracking.setOnAction(event -> {
                             trackedAnimal = animal;
-//                            trackedAnimalStatsLayout.getChildren().clear();
-//                            trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
+                            //trackedAnimalStatsLayout.getChildren().clear();
+                            //trackedAnimalStatsLayout.getChildren().add(animalStatLabel);
                             trackedAnimalStatsLayout.getChildren().remove(startTracking);
                             trackedAnimalStatsLayout.getChildren().add(stopTracking);
                             drawTrackedAnimal();
