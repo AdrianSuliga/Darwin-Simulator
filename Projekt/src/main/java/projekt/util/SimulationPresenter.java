@@ -42,6 +42,8 @@ public class SimulationPresenter {
     private ChoiceBox<String> mutationVariantChoice;
     @FXML
     private TextField geneLengthInput;
+    @FXML
+    private ChoiceBox<String> statisticsChoice;
 
     @FXML
     private void createSimulation() {
@@ -96,12 +98,13 @@ public class SimulationPresenter {
 
         boolean specialMutationLogic = mutationVariantChoice.getValue().equals("slight correction");
 
+        boolean writeDataToCSV = statisticsChoice.getValue().equals("yes");
 
         this.windows.add(new SimulationWindow(
                 new Simulation(
                         mapWidth, mapHeight, energyGainedOnConsumption, plantsPerDay, initialAnimalCount,
                         geneLength, initialAnimalEnergy, energyForBreeding, energyOnBreeding, minMutation,
-                        maxMutation, specialMutationLogic, specialMapLogic)));
+                        maxMutation, specialMutationLogic, specialMapLogic, writeDataToCSV)));
     }
 
     private int parseIntInput(TextField input, boolean canBeZero) {

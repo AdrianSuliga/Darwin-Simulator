@@ -11,10 +11,12 @@ public class Simulation {
     private final int energyForBreeding;
     private final int energyConsumedOnBreeding;
     private final int animalsGeneLength;
+    private final boolean writeToCSV;
 
     private final WorldMap worldMap;
     private final AbstractGeneMutator geneMutator;
     private final AnimalComparator comparator;
+    private final CSVDataWriter writer;
 
     public WorldMap getWorldMap() {
         return worldMap;
@@ -23,14 +25,22 @@ public class Simulation {
     public Simulation(int mapWidth, int mapHeight, int energyGainedOnConsumption,
                       int plantsPerDay, int animalsCount, int animalsGeneLength, int animalsStartingEnergy,
                       int energyForBreeding, int energyConsumedOnBreeding, int minMutationCount,
-                      int maxMutationCount, boolean specialMutationLogic, boolean specialMapLogic) {
+                      int maxMutationCount, boolean specialMutationLogic, boolean specialMapLogic,
+                      boolean writeToCSV) {
         this.energyGainedOnConsumption = energyGainedOnConsumption;
         this.animalsCount = animalsCount;
         this.animalsStartingEnergy = animalsStartingEnergy;
         this.energyForBreeding = energyForBreeding;
         this.energyConsumedOnBreeding = energyConsumedOnBreeding;
         this.animalsGeneLength = animalsGeneLength;
+        this.writeToCSV = writeToCSV;
         this.comparator = new AnimalComparator();
+
+        if (this.writeToCSV) {
+            this.writer = new CSVDataWriter();
+        } else {
+            this.writer = null;
+        }
 
         Map<Vector2d, HashSet<Animal>> animalMap = new HashMap<>();
         for (int i = 0; i < this.animalsCount; i++) {
@@ -67,6 +77,9 @@ public class Simulation {
             consumePlants();
             breedAnimals();
             this.worldMap.spawnPlants();
+            if (this.writeToCSV) {
+                this.writer.writeStatistics(this.worldMap.getStatistics());
+            }
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {
@@ -90,7 +103,7 @@ public class Simulation {
         this.worldMap.mapChanged();
     }
 
-    public Animal getStrongest(HashSet<Animal> animals){
+    public Animal getStrongest(HashSet<Animal> animals) {
         return this.comparator.compare(animals);
     }
 
@@ -117,11 +130,6 @@ public class Simulation {
         this.worldMap.mapChanged();
     }
 
-    public void spawnPalnts(){
-        this.worldMap.spawnPlants();
-        this.worldMap.mapChanged();
-    }
-
     private Animal getRandomAnimal(int maxX, int maxY) {
         List<Integer> genes = new ArrayList<>();
         int randX = (int)(Math.floor(Math.random() * maxX));
@@ -134,7 +142,7 @@ public class Simulation {
         return new Animal(new Vector2d(randX, randY), this.animalsStartingEnergy, genes);
     }
 
-    public boolean isPositionInEquator(int y){
+    public boolean isPositionInEquator(int y) {
         return this.worldMap.isPositionInEquator(y);
     }
 }

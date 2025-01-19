@@ -143,7 +143,7 @@ public class SimulationWindow implements MapChangeListener {
         this.doWork();
     }
 
-    public void doWork(){
+    public void doWork() {
         try {
             Platform.runLater(() -> {
                 this.drawStatistics();
