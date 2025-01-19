@@ -89,6 +89,15 @@
                 <Region HBox.hgrow="ALWAYS" />
                 <TextField fx:id="geneLengthInput" promptText="10"/>
             </HBox>
+            <Label text="Statistics" alignment="CENTER" />
+            <HBox alignment="CENTER">
+                <Label text="Write statistics to .csv file?" />
+                <Region HBox.hgrow="ALWAYS" />
+                <ChoiceBox fx:id="statisticsChoice" value="no">
+                    <String fx:value="no"/>
+                    <String fx:value="yes"/>
+                </ChoiceBox>
+            </HBox>
             <Button text="START" alignment="CENTER" onAction="#createSimulation"/>
         </VBox>
     </center>
