@@ -210,7 +210,7 @@ public class SimulationWindow implements MapChangeListener {
         mainGrid.getRowConstraints().add(new RowConstraints(cell_width));
         Label xyLabel = new Label("y\\x");
         xyLabel.setStyle("-fx-border-color: black;" +
-                "-fx-border-width: 1");
+                "-fx-border-width: 1;" + "-fx-font-size:"+(cell_height/2)+"px; -fx-text-overrun: clip;");
         xyLabel.setAlignment(Pos.CENTER);
         xyLabel.setPrefSize(cell_width, cell_height);
         mainGrid.add(xyLabel, 0, 0);
@@ -221,7 +221,7 @@ public class SimulationWindow implements MapChangeListener {
         for (int i = maxY + 1; i >= 1; i--) {
             Label label = new Label(String.valueOf(i - 1));
             label.setStyle("-fx-border-color: black;" +
-                    "-fx-border-width: 1");
+                    "-fx-border-width: 1;"+ "-fx-font-size:"+(cell_height/2)+"px; -fx-text-overrun: clip;");
             label.setAlignment(Pos.CENTER);
             label.setPrefSize(cell_width, cell_height);
             mainGrid.getRowConstraints().add(new RowConstraints(cell_height));
@@ -234,7 +234,7 @@ public class SimulationWindow implements MapChangeListener {
         for (int i = 1; i <= this.maxX + 1; i++) {
             Label label = new Label(String.valueOf(i - 1));
             label.setStyle("-fx-border-color: black;" +
-                    "-fx-border-width: 1");
+                    "-fx-border-width: 1;" + "-fx-font-size:"+(cell_height/2)+"px; -fx-text-overrun: clip;");
             label.setAlignment(Pos.CENTER);
             label.setPrefSize(cell_width, cell_height);
             mainGrid.getColumnConstraints().add(new ColumnConstraints(cell_width));
