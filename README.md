@@ -14,6 +14,18 @@ Autorzy:
 - [Adrian Suliga](https://github.com/AdrianSuliga)
 - [Aleksander Matyka](https://github.com/alekmatyka)
 
+## Legenda mapy
+
+- Zwierzęta są reprezentowane jako X, trawa jako *. Zwierzęta mają pierwszeństwo nad trawą jeśli są na tym samym polu.
+
+- Energia najsilniejszego zwierzęcia na mapie jest przedstawiana jako gradient koloru od <span style="color: rgb(23, 227, 0)">jasno zielonego</span> do <span style="color:rgb(0, 26, 255)">ciemno niebieskiego</span> na danym polu na mapie (im zieleńszy tym zwierzak ma więcej energii).
+
+- Martwe zwierzęta mają kolor czarny - <span style="color: black">X</span>
+
+- Po zatrzymaniu, pola zawierające zwierzęta z najpopularniejszymi genomami mają tekst koloru <span style="color: red">czerwonego</span>. 
+
+- Śledzone zwierzę ma pole o jasnoszarym tle i jest reprezentowane przez swój kierunek zamiast znaku X. 
+
 ## Podział pracy:
 
 ### Aleksander Matyka:
